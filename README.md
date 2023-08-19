@@ -18,7 +18,7 @@ Files have to be sequential and cannot have gaps!
 
 Tweak config.py to your liking.
 
-Change the comfy ui input path to where your comfyui is installed.
+Change the comfy ui input path to where your comfyui is installed. Keep the input.png at the end.
 
 ```comfyui_input_path = "..\ComfyUI\input\input.png"```
 
