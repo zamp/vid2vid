@@ -1,0 +1,4 @@
+ezsynth
+pillow
+scipy
+websocket-client
