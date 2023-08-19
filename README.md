@@ -1,10 +1,12 @@
 # comfy-temporal-stability
 
-# Install
+## Install
 
-pip install -r "requirements.txt"
+Clone the repo somewhere and run 
 
-# How to run
+```pip install -r "requirements.txt"```
+
+## How to run
 
 Start ComfyUI.
 
@@ -16,7 +18,7 @@ Either run "run.bat" or "python main.py" from command line.
 
 When re-running please delete output and ebsynth directories before firing it up again.
 
-# How to do custom comfyui workflows
+## How to do custom comfyui workflows
 
 Enable developer options in comfyui and then save workflow api.
 
@@ -26,9 +28,13 @@ Change config to point to it.
 
 For now you need to modify the values in comfyui.py. 
 
+```
 sampler = "14"
 positive_input = "6"
 negative_input = "7"
 image_input = "10"
+```
 
 Set the numbers to whatever they're in the workflow_api.json
+
+Try to avoid scaling output image in the workflow or ensure output is the exact same size as input.
