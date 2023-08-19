@@ -26,6 +26,8 @@ Either run "run.bat" or "python main.py" from command line.
 
 When re-running please delete output and ebsynth directories before firing it up again.
 
+To run the provided workflow_api.json you need to have Flat-2D Animerge model installed. You can get it from https://civitai.com/models/35960/flat-2d-animerge. You can also just change the json to point to some other model or create your own workflow which is explained below.
+
 ## How to do custom comfyui workflows
 
 Enable developer options in comfyui and then save workflow api.
