@@ -14,6 +14,10 @@ Put your video files in video directory. All files have to be named 000.png wher
 
 Tweak config.py to your liking.
 
+Change the comfy ui input path to where your comfyui is installed.
+
+```comfyui_input_path = "..\ComfyUI\input\input.png"```
+
 Either run "run.bat" or "python main.py" from command line.
 
 When re-running please delete output and ebsynth directories before firing it up again.
