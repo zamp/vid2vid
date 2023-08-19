@@ -1,7 +1,4 @@
-#This is an example that uses the websockets api to know when a prompt execution is done
-#Once the prompt execution is done it downloads the images using the /history endpoint
-
-import websocket #NOTE: websocket-client (https://github.com/websocket-client/websocket-client)
+import websocket
 import uuid
 import json
 import urllib.request
@@ -90,13 +87,3 @@ def process_image(cfg, denoise):
 	for node_id in images:
 		for image_data in images[node_id]:
 			return Image.open(io.BytesIO(image_data)).convert("RGB")
-	
-
-#Commented out code to display the output images:
-
-# for node_id in images:
-#	 for image_data in images[node_id]:
-#		 from PIL import Image
-#		 import io
-#		 image = Image.open(io.BytesIO(image_data))
-#		 image.show()
