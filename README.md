@@ -14,6 +14,8 @@ Start ComfyUI.
 
 Put your video files in video directory. All files have to be named 000.png where 000 is the frame number. 001.png, 002.png, 003.png etc.
 
+Files have to be sequential and cannot have gaps!
+
 Tweak config.py to your liking.
 
 Change the comfy ui input path to where your comfyui is installed.
