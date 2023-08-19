@@ -101,7 +101,7 @@ def run_stable_diffusion(input_file_path, output_file_path, cfg, denoise):
 comfyui.connect()
 
 files = os.listdir(config.video_path)
-files = [f for f in files if os.path.isfile(config.video_path+f)]
+files = [f for f in files if os.path.isfile(config.video_path+f) and f.endswith(".png")]
 
 frame_max = 0
 for file in files:
