@@ -32,7 +32,7 @@ def upload_image(image_path):
 	files = {"image": ("input.png", open(image_path, 'rb'), 'image/png', {'Expires': '0'})}
 	data = {"overwrite": "true"}
 	result = requests.post("http://{}/upload/image".format(config.comfyui_server_address), files=files, data=data)
-	print(result.text)
+	#print(result.text)
 	return json.loads(result.text)
 
 def get_images(ws, prompt):
@@ -73,7 +73,7 @@ def process_image(image_path, cfg, denoise):
 	file_name = response["name"]
 	sub_dir = response["subfolder"]
 
-	print("upload file {}{}".format(file_name, sub_dir))
+	#print("upload file {}{}".format(file_name, sub_dir))
 
 	prompt = json.load(open(config.workflow_json))
 
