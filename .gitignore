@@ -2,3 +2,4 @@
 /output
 /video/*.png
 /__pycache__
+/config.py
