@@ -16,11 +16,7 @@ Put your video files in video directory. All files have to be named 000.png wher
 
 Files have to be sequential and cannot have gaps!
 
-Tweak config.py to your liking.
-
-Change the comfy ui input path to where your comfyui is installed. Keep the input.png at the end.
-
-```comfyui_input_path = "..\ComfyUI\input\input.png"```
+Rename example.config.py to config.py and tweak it to your liking.
 
 Either run "run.bat" or "python main.py" from command line.
 

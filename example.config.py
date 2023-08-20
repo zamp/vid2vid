@@ -11,8 +11,6 @@ output_path = "output/"
 ebsynth_path = "ebsynth/"
 use_random_seed = True
 comfyui_server_address = "127.0.0.1:8188"
-# change this to your install path of your comfy ui
-comfyui_input_path = "..\ComfyUI\input\input.png"
 
 # how much will all of the denoise, reinforce, blend values be multiplied with per iteration, cfg will not be touched
 iteration_multiplier = 0.666 # hail satan

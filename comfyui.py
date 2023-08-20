@@ -7,6 +7,7 @@ import config
 from PIL import Image
 import io
 import random
+import requests
 
 client_id = str(uuid.uuid4())
 ws = websocket.WebSocket()
@@ -26,6 +27,13 @@ def get_image(filename, subfolder, folder_type):
 def get_history(prompt_id):
 	with urllib.request.urlopen("http://{}/history/{}".format(config.comfyui_server_address, prompt_id)) as response:
 		return json.loads(response.read())
+	
+def upload_image(image_path):
+	files = {"image": ("input.png", open(image_path, 'rb'), 'image/png', {'Expires': '0'})}
+	data = {"overwrite": "true"}
+	result = requests.post("http://{}/upload/image".format(config.comfyui_server_address), files=files, data=data)
+	print(result.text)
+	return json.loads(result.text)
 
 def get_images(ws, prompt):
 	prompt_id = queue_prompt(prompt)['prompt_id']
@@ -60,7 +68,13 @@ def connect():
 def close():
 	ws.close()
 
-def process_image(cfg, denoise):
+def process_image(image_path, cfg, denoise):
+	response = upload_image(image_path)
+	file_name = response["name"]
+	sub_dir = response["subfolder"]
+
+	print("upload file {}{}".format(file_name, sub_dir))
+
 	prompt = json.load(open(config.workflow_json))
 
 	# todo: read json class name and pick these out from that
@@ -69,18 +83,32 @@ def process_image(cfg, denoise):
 	negative_input = "7"
 	image_input = "10"
 
+	INPUTS = "inputs"
+	CLASS_TYPE = "class_type"
+
+	for key in prompt:
+		if prompt[key][CLASS_TYPE] == "LoadImage":
+			image_input = key
+		if prompt[key][CLASS_TYPE] == "KSampler":
+			sampler = key
+		if prompt[key][CLASS_TYPE] == "CLIPTextEncode" or prompt[key][CLASS_TYPE] == "BNK_CLIPTextEncodeAdvanced":
+			if prompt[key][INPUTS]["text"] == "positive_prompt":
+				positive_input = key
+			if prompt[key][INPUTS]["text"] == "negative_prompt":
+				negative_input = key
+
 	if config.use_random_seed:
-		prompt[sampler]["inputs"]["seed"] = random.randint(1,9999999999999)
+		prompt[sampler][INPUTS]["seed"] = random.randint(1,18446744073709551616)
 	else:
-		prompt[sampler]["inputs"]["seed"] = 69 # nice
+		prompt[sampler][INPUTS]["seed"] = 69 # nice
 
-	prompt[sampler]["inputs"]["cfg"] = cfg
-	prompt[sampler]["inputs"]["denoise"] = denoise
+	prompt[sampler][INPUTS]["cfg"] = cfg
+	prompt[sampler][INPUTS]["denoise"] = denoise
 
-	prompt[image_input]["inputs"]["image"] = "input.png"
+	prompt[image_input][INPUTS]["image"] = file_name
 
-	prompt[positive_input]["inputs"]["text"] = config.positive_prompt
-	prompt[negative_input]["inputs"]["text"] = config.negative_prompt
+	prompt[positive_input][INPUTS]["text"] = config.positive_prompt
+	prompt[negative_input][INPUTS]["text"] = config.negative_prompt
 
 	images = get_images(ws, prompt)
 
