@@ -71,13 +71,10 @@ def close():
 def process_image(image_path, cfg, denoise):
 	response = upload_image(image_path)
 	file_name = response["name"]
-	sub_dir = response["subfolder"]
-
-	#print("upload file {}{}".format(file_name, sub_dir))
 
 	prompt = json.load(open(config.workflow_json))
 
-	# todo: read json class name and pick these out from that
+	# modify these if the search fails
 	sampler = "14"
 	positive_input = "6"
 	negative_input = "7"

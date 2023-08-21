@@ -26,13 +26,15 @@ To run the provided workflow_api.json you need to have Flat-2D Animerge model in
 
 ## How to do custom comfyui workflows
 
+Open workflow.json in ComfyUI and modify it as you want.
+
 Enable developer options in comfyui and then save workflow api.
 
 Save it to the root.
 
 Change config to point to it.
 
-For now you need to modify the values in comfyui.py. 
+It will try to find the sampler and positive/negative input fields automatically. But in case it can't find them you can change them in comfyui.py
 
 ```
 sampler = "14"
@@ -40,6 +42,14 @@ positive_input = "6"
 negative_input = "7"
 image_input = "10"
 ```
+
+To automatically find positive and negative prompt fields save them with "positive_prompt" and "negative_prompt" in the text field.
+
+Currently supported for automatic search:
+Clip: ```CLIPTextEncode and BNK_CLIPTextEncodeAdvanced```
+Sampler: ```KSampler```
+Image loader: ```LoadImage```
+
 
 Set the numbers to whatever they're in the workflow_api.json
 
