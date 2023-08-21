@@ -201,7 +201,7 @@
         "Node name for S&R": "CheckpointLoaderSimple"
       },
       "widgets_values": [
-        "mistoonAnime_v10.safetensors"
+        "flat2DAnimerge_v30.safetensors"
       ]
     },
     {

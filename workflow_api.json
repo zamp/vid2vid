@@ -1,7 +1,7 @@
 {
   "4": {
     "inputs": {
-      "ckpt_name": "mistoonAnime_v10.safetensors"
+      "ckpt_name": "flat2DAnimerge_v30.safetensors"
     },
     "class_type": "CheckpointLoaderSimple"
   },
