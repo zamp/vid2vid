@@ -24,11 +24,11 @@ When re-running please delete output and ebsynth directories before firing it up
 
 To run the provided workflow_api.json you need to have Flat-2D Animerge model installed. You can get it from https://civitai.com/models/35960/flat-2d-animerge. You can also just change the json to point to some other model or create your own workflow which is explained below.
 
-## How to do custom comfyui workflows
+## How to do custom ComfyUI workflows
 
 Open workflow.json in ComfyUI and modify it as you want.
 
-Enable developer options in comfyui and then save workflow api.
+**Enable developer options in ComfyUI (gear icon, toggle "Enable Dev mode Options") and then save workflow api.**
 
 Save it to the root.
 
@@ -45,11 +45,10 @@ image_input = "10"
 
 To automatically find positive and negative prompt fields save them with "positive_prompt" and "negative_prompt" in the text field.
 
-Currently supported for automatic search:
-Clip: ```CLIPTextEncode and BNK_CLIPTextEncodeAdvanced```
+Currently supported nodes for automatic search:
+Clip: ```CLIPTextEncode``` and  ```BNK_CLIPTextEncodeAdvanced```
 Sampler: ```KSampler```
 Image loader: ```LoadImage```
-
 
 Set the numbers to whatever they're in the workflow_api.json
 
