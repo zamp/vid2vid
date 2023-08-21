@@ -49,6 +49,7 @@ Currently supported nodes for automatic search:
 Clip: ```CLIPTextEncode``` and  ```BNK_CLIPTextEncodeAdvanced```
 Sampler: ```KSampler```
 Image loader: ```LoadImage```
+Model loader: ```CheckpointLoaderSimple```
 
 Set the numbers to whatever they're in the workflow_api.json
 

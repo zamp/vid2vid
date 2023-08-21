@@ -79,11 +79,14 @@ def process_image(image_path, cfg, denoise):
 	positive_input = "6"
 	negative_input = "7"
 	image_input = "10"
+	model_loader = "4"
 
 	INPUTS = "inputs"
 	CLASS_TYPE = "class_type"
 
 	for key in prompt:
+		if prompt[key][CLASS_TYPE] == "CheckpointLoaderSimple":
+			model_loader = key
 		if prompt[key][CLASS_TYPE] == "LoadImage":
 			image_input = key
 		if prompt[key][CLASS_TYPE] == "KSampler":
@@ -94,10 +97,10 @@ def process_image(image_path, cfg, denoise):
 			if prompt[key][INPUTS]["text"] == "negative_prompt":
 				negative_input = key
 
-	if config.use_random_seed:
+	if config.seed == -1:
 		prompt[sampler][INPUTS]["seed"] = random.randint(1,18446744073709551616)
 	else:
-		prompt[sampler][INPUTS]["seed"] = 69 # nice
+		prompt[sampler][INPUTS]["seed"] = config.seed
 
 	prompt[sampler][INPUTS]["cfg"] = cfg
 	prompt[sampler][INPUTS]["denoise"] = denoise
@@ -106,6 +109,9 @@ def process_image(image_path, cfg, denoise):
 
 	prompt[positive_input][INPUTS]["text"] = config.positive_prompt
 	prompt[negative_input][INPUTS]["text"] = config.negative_prompt
+
+	if config.model != False:
+		prompt[model_loader][INPUTS]["ckpt_name"] = config.model
 
 	images = get_images(ws, prompt)
 

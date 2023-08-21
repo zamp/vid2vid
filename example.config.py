@@ -1,6 +1,8 @@
 # setting this to a positive value will show that frame every time it is generated
 debug_show_frame = -1
 
+model = "flat2DAnimerge_v30.safetensors"
+
 positive_prompt = "positive prompt here"
 negative_prompt = "negative prompt here"
 
@@ -9,7 +11,7 @@ workflow_json = "workflow_api.json"
 video_path = "video/"
 output_path = "output/"
 ebsynth_path = "ebsynth/"
-use_random_seed = True
+seed = -1 # set to -1 for random or a value between 0 and 18446744073709551616
 comfyui_server_address = "127.0.0.1:8188"
 
 # how much will all of the denoise, reinforce, blend values be multiplied with per iteration, cfg will not be touched
