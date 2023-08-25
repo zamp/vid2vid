@@ -4,6 +4,7 @@ debug_show_frame = -1
 temp_dir = "temp/"
 video_dir = "video/"
 output_dir = "output/"
+temp_file = "temp.png"
 
 seed = -1 # Set to -1 for random or a value between 0 and 18446744073709551616
 comfyui_server_address = "127.0.0.1:8188"
