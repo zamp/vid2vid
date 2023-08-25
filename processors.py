@@ -53,7 +53,7 @@ def process_ebsynth(input_dir, output_dir, video_dir, alpha, frame_spread, sprea
 		sa = spread_alpha_multiplier*2
 
 		for spread in range(1, frame_spread + 1):
-			a = alpha * (sa / spread)			
+			a = alpha * (sa / spread)
 			
 			spread_file = f"{str(clamp(frame_number + spread, min_frame, max_frame)).zfill(len(filename))}{ext}"
 			if spread_file != file:

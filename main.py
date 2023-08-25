@@ -5,16 +5,12 @@ from PIL import Image
 import comfyui
 import processors
 import util
+import render_pass_defaults as rpd
 
 try:
 	comfyui.connect()
 
-	#if os.path.exists(config.output_dir):
-	#	shutil.rmtree(config.output_dir)
-	if not os.path.exists(config.output_dir):
-		os.makedirs(config.output_dir)
-
-	frame_min,frame_max = util.get_min_max_frames(config.video_dir)
+	frame_min,frame_max = util.get_min_max_frames(rpd.video_dir)
 
 	print("Processing files from frame: " + str(frame_min).zfill(3) + " to: " + str(frame_max).zfill(3))
 
@@ -25,6 +21,9 @@ try:
 		
 		input_dir = render_pass["input_dir"]
 		output_dir = render_pass["output_dir"]
+
+		if not os.path.exists(output_dir):
+			os.makedirs(output_dir)
 		
 		util.copy_files_from_to(input_dir, config.temp_dir, ".png")
 
