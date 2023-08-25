@@ -26,11 +26,11 @@ render_passes = [
     {"type": "ebsynth_blend", "input_dir": output_dir, "output_dir": output_dir, "alpha": 0.5, "frame_spread": 2, "spread_alpha_multiplier": 0.5 },
 	{"type": "alpha_blend", "input_dir": output_dir, "blend_dir": video_dir, "output_dir": output_dir, "alpha": 0.5 },
 
-    {"type": "comfyui", "input_dir": video_dir, "video_dir": video_dir, "output_dir": output_dir, "workflow":wf, "model":mdl, "cfg":8, "denoise": 0.4, "positive_prompt": pp, "negative_prompt": np },
+    {"type": "comfyui", "input_dir": output_dir, "video_dir": video_dir, "output_dir": output_dir, "workflow":wf, "model":mdl, "cfg":8, "denoise": 0.4, "positive_prompt": pp, "negative_prompt": np },
     {"type": "ebsynth_blend", "input_dir": output_dir, "output_dir": output_dir, "alpha": 0.5, "frame_spread": 2, "spread_alpha_multiplier": 0.25 },
 	{"type": "alpha_blend", "input_dir": output_dir, "blend_dir": video_dir, "output_dir": output_dir, "alpha": 0.25 },
 
-    {"type": "comfyui", "input_dir": video_dir, "video_dir": video_dir, "output_dir": output_dir, "workflow":wf, "model":mdl, "cfg":8, "denoise": 0.25, "positive_prompt": pp, "negative_prompt": np },
+    {"type": "comfyui", "input_dir": output_dir, "video_dir": video_dir, "output_dir": output_dir, "workflow":wf, "model":mdl, "cfg":8, "denoise": 0.25, "positive_prompt": pp, "negative_prompt": np },
     {"type": "ebsynth_blend", "input_dir": output_dir, "output_dir": output_dir, "alpha": 0.5, "frame_spread": 2, "spread_alpha_multiplier": 0.125 },
 	{"type": "alpha_blend", "input_dir": output_dir, "blend_dir": video_dir, "output_dir": output_dir, "alpha": 0.125 },
 ]
