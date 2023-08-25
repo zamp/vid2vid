@@ -5,7 +5,6 @@ import ebsynth
 import cv2
 import os
 import shutil
-import config
 
 def generate_ebsynth(style_path, guide0_path, guide1_path):
 	if not os.path.exists(style_path):
@@ -38,17 +37,21 @@ def process_comfyui(input_dir:str, video_dir:str, output_dir:str, cfg:int, denoi
 def clamp(num, min_value, max_value):
    return max(min(num, max_value), min_value)
 
-def process_ebsynth(input_dir, output_dir, video_dir, alpha, frame_spread, spread_alpha_multiplier):
+def process_ebsynth(temp_file, input_dir, output_dir, video_dir, alpha, frame_spread, spread_alpha_multiplier):
 	files = util.get_png_files(input_dir)
 
 	min_frame, max_frame = util.get_min_max_frames(input_dir)
+
+	frame_spread = int(frame_spread)
+	spread_alpha_multiplier = float(spread_alpha_multiplier)
+	alpha = float(alpha)
 
 	for file in files:
 		filename = file[:-4]
 		ext = file[-4:]
 		frame_number = int(filename)
 
-		shutil.copy(input_dir+file, config.temp_file)
+		shutil.copy(input_dir+file, temp_file)
 
 		sa = spread_alpha_multiplier*2
 
@@ -57,19 +60,19 @@ def process_ebsynth(input_dir, output_dir, video_dir, alpha, frame_spread, sprea
 			
 			spread_file = f"{str(clamp(frame_number + spread, min_frame, max_frame)).zfill(len(filename))}{ext}"
 			if spread_file != file:
-				src = Image.open(config.temp_file).convert("RGB")
+				src = Image.open(temp_file).convert("RGB")
 				img = generate_ebsynth(input_dir+spread_file, video_dir+spread_file, video_dir+file)
 				src = Image.blend(src, img, a)
-				src.save(config.temp_file)			
+				src.save(temp_file)			
 
 			spread_file = f"{str(clamp(frame_number - spread, min_frame, max_frame)).zfill(len(filename))}{ext}"
 			if spread_file != file:
-				src = Image.open(config.temp_file).convert("RGB")
+				src = Image.open(temp_file).convert("RGB")
 				img = generate_ebsynth(input_dir+spread_file, video_dir+spread_file, video_dir+file)
 				src = Image.blend(src, img, a)
-				src.save(config.temp_file)
+				src.save(temp_file)
 
-		shutil.copy(config.temp_file, output_dir+file)
+		shutil.copy(temp_file, output_dir+file)
 
 def process_alpha_blend(input_dir, blend_dir, output_dir, alpha):
 	files = util.get_png_files(input_dir)

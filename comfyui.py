@@ -3,35 +3,41 @@ import uuid
 import json
 import urllib.request
 import urllib.parse
-import config
 from PIL import Image
 import io
 import random
 import requests
+import configparser
+import os
 
 client_id = str(uuid.uuid4())
 ws = websocket.WebSocket()
 
+config = configparser.ConfigParser()
+config.read(["example.config.ini", "config.ini"])
+
+defaults = config["DEFAULT"]
+
 def queue_prompt(prompt):
 	p = {"prompt": prompt, "client_id": client_id}
 	data = json.dumps(p).encode('utf-8')
-	req =  urllib.request.Request("http://{}/prompt".format(config.comfyui_server_address), data=data)
+	req =  urllib.request.Request("http://{}/prompt".format(defaults.get("ComfyUI_ServerAddress")), data=data)
 	return json.loads(urllib.request.urlopen(req).read())
 
 def get_image(filename, subfolder, folder_type):
 	data = {"filename": filename, "subfolder": subfolder, "type": folder_type}
 	url_values = urllib.parse.urlencode(data)
-	with urllib.request.urlopen("http://{}/view?{}".format(config.comfyui_server_address, url_values)) as response:
+	with urllib.request.urlopen("http://{}/view?{}".format(defaults.get("ComfyUI_ServerAddress"), url_values)) as response:
 		return response.read()
 
 def get_history(prompt_id):
-	with urllib.request.urlopen("http://{}/history/{}".format(config.comfyui_server_address, prompt_id)) as response:
+	with urllib.request.urlopen("http://{}/history/{}".format(defaults.get("ComfyUI_ServerAddress"), prompt_id)) as response:
 		return json.loads(response.read())
 	
 def upload_image(image_path, filename):
 	files = {"image": (filename, open(image_path, 'rb'), 'image/png', {'Expires': '0'})}
 	data = {"overwrite": "true"}
-	result = requests.post("http://{}/upload/image".format(config.comfyui_server_address), files=files, data=data)
+	result = requests.post("http://{}/upload/image".format(defaults.get("ComfyUI_ServerAddress")), files=files, data=data)
 	#print(result.text)
 	return json.loads(result.text)
 
@@ -63,16 +69,15 @@ def get_images(ws, prompt):
 	return output_images
 
 def connect():
-	ws.connect("ws://{}/ws?clientId={}".format(config.comfyui_server_address, client_id))
+	ws.connect("ws://{}/ws?clientId={}".format(defaults.get("ComfyUI_ServerAddress"), client_id))
 
 def close():
 	ws.close()
 
 def process_image(image_path, video_path, cfg, denoise, positive_prompt, negative_prompt, workflow_json, model):
-	response = upload_image(image_path, "input.png")
-	file_name = response["name"]
-	if config.upload_video_filename != None:
-		upload_image(video_path, config.upload_video_filename)
+	upload_image(image_path, "input.png")	
+	if defaults.getboolean("UploadVideoFile"):
+		upload_image(video_path, defaults.get("UploadVideoFileName"))
 
 	prompt = json.load(open(workflow_json))
 
@@ -99,15 +104,14 @@ def process_image(image_path, video_path, cfg, denoise, positive_prompt, negativ
 			if prompt[key][INPUTS]["text"] == "negative_prompt":
 				negative_input = key
 
-	if config.seed == -1:
+	seed = defaults.getint("Seed")
+	if seed == -1:
 		prompt[sampler][INPUTS]["seed"] = random.randint(1,18446744073709551616)
 	else:
-		prompt[sampler][INPUTS]["seed"] = config.seed
+		prompt[sampler][INPUTS]["seed"] = seed
 
 	prompt[sampler][INPUTS]["cfg"] = cfg
 	prompt[sampler][INPUTS]["denoise"] = denoise
-	if config.upload_video_filename == None:
-		prompt[image_input][INPUTS]["image"] = file_name
 
 	if positive_prompt != None:
 		if positive_input in prompt:
