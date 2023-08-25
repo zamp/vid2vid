@@ -79,5 +79,5 @@ def process_alpha_blend(input_dir, blend_dir, output_dir, alpha):
 	for file in files:
 		src = Image.open(input_dir+file).convert("RGB")
 		img = Image.open(blend_dir+file).convert("RGB")
-		src = Image.blend(src, img, alpha)
+		src = Image.blend(src, img, float(alpha))
 		src.save(output_dir+file)
