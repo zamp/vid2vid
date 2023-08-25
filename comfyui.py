@@ -106,7 +106,8 @@ def process_image(image_path, video_path, cfg, denoise, positive_prompt, negativ
 
 	prompt[sampler][INPUTS]["cfg"] = cfg
 	prompt[sampler][INPUTS]["denoise"] = denoise
-	prompt[image_input][INPUTS]["image"] = file_name
+	if config.upload_video_filename == None:
+		prompt[image_input][INPUTS]["image"] = file_name
 
 	if positive_prompt != None:
 		if positive_input in prompt:
