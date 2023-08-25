@@ -27,15 +27,15 @@ render_passes = [
     {"type": "ebsynth_blend", "input_dir": output_dir, "output_dir": output_dir, "video_dir": video_dir, "alpha": 0.5, "frame_spread": 2, "spread_alpha_multiplier": 0.5 },
 	{"type": "alpha_blend", "input_dir": output_dir, "blend_dir": video_dir, "output_dir": output_dir, "alpha": 0.3 },
 
-    {"type": "comfyui", "input_dir": video_dir, "output_dir": video_dir, "output_dir": output_dir, "workflow":wf, "model":mdl, "cfg":8, "denoise": 0.2, "positive_prompt": pp, "negative_prompt": np },
+    {"type": "comfyui", "input_dir": output_dir, "video_dir": video_dir, "output_dir": output_dir, "workflow":wf, "model":mdl, "cfg":8, "denoise": 0.2, "positive_prompt": pp, "negative_prompt": np },
     {"type": "ebsynth_blend", "input_dir": output_dir, "output_dir": output_dir, "video_dir": video_dir, "alpha": 0.25, "frame_spread": 2, "spread_alpha_multiplier": 0.5 },
 	{"type": "alpha_blend", "input_dir": output_dir, "blend_dir": video_dir, "output_dir": output_dir, "alpha": 0.15 },
 
-    {"type": "comfyui", "input_dir": video_dir, "output_dir": video_dir, "output_dir": output_dir, "workflow":wf, "model":mdl, "cfg":8, "denoise": 0.1, "positive_prompt": pp, "negative_prompt": np },
+    {"type": "comfyui", "input_dir": output_dir, "video_dir": video_dir, "output_dir": output_dir, "workflow":wf, "model":mdl, "cfg":8, "denoise": 0.1, "positive_prompt": pp, "negative_prompt": np },
     {"type": "ebsynth_blend", "input_dir": output_dir, "output_dir": output_dir, "video_dir": video_dir, "alpha": 0.125, "frame_spread": 2, "spread_alpha_multiplier": 0.5 },
 	{"type": "alpha_blend", "input_dir": output_dir, "blend_dir": video_dir, "output_dir": output_dir, "alpha": 0.075 },
 
-    {"type": "comfyui", "input_dir": video_dir, "output_dir": video_dir, "output_dir": output_dir, "workflow":wf, "model":mdl, "cfg":8, "denoise": 0.05, "positive_prompt": pp, "negative_prompt": np },
+    {"type": "comfyui", "input_dir": output_dir, "video_dir": video_dir, "output_dir": output_dir, "workflow":wf, "model":mdl, "cfg":8, "denoise": 0.05, "positive_prompt": pp, "negative_prompt": np },
 ]
 
 # Common settings:
