@@ -47,8 +47,7 @@ def main():
 			neg_prompt = render_pass.get("NegativePrompt")
 			workflow = render_pass.get("Workflow")
 			model = render_pass.get("Model")
-			video_dir = render_pass.get("VideoDir")
-			
+			video_dir = render_pass.get("VideoDir")			
 			processors.process_comfyui(temp_dir, video_dir, output_dir, cfg, denoise, pos_prompt, neg_prompt, workflow, model)
 
 		elif type == "ebsynth_blend":
@@ -60,8 +59,9 @@ def main():
 
 		elif type == "alpha_blend":
 			alpha = render_pass.get("Alpha")
-			input_dir = render_pass.get("InputDir")
-			processors.process_alpha_blend(temp_dir, input_dir, output_dir, alpha)
+			blend_dir = render_pass.get("BlendDir")
+			output_dir = render_pass.get("OutputDir")
+			processors.process_alpha_blend(temp_dir, blend_dir, output_dir, alpha)
 
 	shutil.rmtree(temp_dir)
 	if os.path.isfile(temp_file):

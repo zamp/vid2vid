@@ -63,7 +63,7 @@ def process_ebsynth(temp_file, input_dir, output_dir, video_dir, alpha, frame_sp
 				src = Image.open(temp_file).convert("RGB")
 				img = generate_ebsynth(input_dir+spread_file, video_dir+spread_file, video_dir+file)
 				src = Image.blend(src, img, a)
-				src.save(temp_file)			
+				src.save(temp_file)
 
 			spread_file = f"{str(clamp(frame_number - spread, min_frame, max_frame)).zfill(len(filename))}{ext}"
 			if spread_file != file:
