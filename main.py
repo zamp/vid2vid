@@ -43,7 +43,8 @@ try:
 			alpha = render_pass["alpha"]
 			frame_spread = render_pass["frame_spread"]
 			spread_alpha_multiplier = render_pass["spread_alpha_multiplier"]
-			processors.process_ebsynth(config.temp_dir, output_dir, alpha, frame_spread, spread_alpha_multiplier)
+			video_dir = render_pass["video_dir"]
+			processors.process_ebsynth(config.temp_dir, output_dir, video_dir, alpha, frame_spread, spread_alpha_multiplier)
 
 		elif type == "alpha_blend":
 			alpha = render_pass["alpha"]
@@ -51,6 +52,8 @@ try:
 			processors.process_alpha_blend(config.temp_dir, blend_dir, output_dir, alpha)
 
 	shutil.rmtree(config.temp_dir)
+	if os.path.isfile(config.temp_file):
+		os.remove(config.temp_file)
 
 	print("DONE!")
 finally:

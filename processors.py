@@ -4,6 +4,8 @@ import util
 import ebsynth
 import cv2
 import os
+import shutil
+import config
 
 def generate_ebsynth(style_path, guide0_path, guide1_path):
 	if not os.path.exists(style_path):
@@ -18,7 +20,7 @@ def generate_ebsynth(style_path, guide0_path, guide1_path):
 
 	eb = ebsynth.ebsynth(style_path, [(guide0_path, guide1_path)])
 	result = cv2.cvtColor(eb.run(), cv2.COLOR_BGR2RGB)
-	return Image.fromarray(result)
+	return Image.fromarray(result).convert("RGB")
 
 def run_stable_diffusion(input_file_path:str, src_file_path:str, output_file_path:str, cfg:int, denoise:float, positive_prompt:str, negative_prompt:str, workflow_json:str, model:str):
 	image = comfyui.process_image(input_file_path, src_file_path, cfg, denoise, positive_prompt, negative_prompt, workflow_json, model)
@@ -36,7 +38,7 @@ def process_comfyui(input_dir:str, video_dir:str, output_dir:str, cfg:int, denoi
 def clamp(num, min_value, max_value):
    return max(min(num, max_value), min_value)
 
-def process_ebsynth(input_dir, output_dir, alpha, frame_spread, spread_alpha_multiplier):
+def process_ebsynth(input_dir, output_dir, video_dir, alpha, frame_spread, spread_alpha_multiplier):
 	files = util.get_png_files(input_dir)
 
 	min_frame, max_frame = util.get_min_max_frames(input_dir)
@@ -46,22 +48,28 @@ def process_ebsynth(input_dir, output_dir, alpha, frame_spread, spread_alpha_mul
 		ext = file[-4:]
 		frame_number = int(filename)
 
-		src = Image.open(input_dir+file).convert("RGB")
+		shutil.copy(input_dir+file, config.temp_file)
 
 		sa = spread_alpha_multiplier*2
 
 		for spread in range(1, frame_spread + 1):
-			a = alpha * (sa / spread)
+			a = alpha * (sa / spread)			
 			
 			spread_file = f"{str(clamp(frame_number + spread, min_frame, max_frame)).zfill(len(filename))}{ext}"
-			img = generate_ebsynth(input_dir+spread_file, input_dir+spread_file, input_dir+file)
-			src = Image.blend(src, img, a)
+			if spread_file != file:
+				src = Image.open(config.temp_file).convert("RGB")
+				img = generate_ebsynth(input_dir+spread_file, video_dir+spread_file, video_dir+file)
+				src = Image.blend(src, img, a)
+				src.save(config.temp_file)			
 
 			spread_file = f"{str(clamp(frame_number - spread, min_frame, max_frame)).zfill(len(filename))}{ext}"
-			img = generate_ebsynth(input_dir+spread_file, input_dir+spread_file, input_dir+file)
-			src = Image.blend(src, img, a)
+			if spread_file != file:
+				src = Image.open(config.temp_file).convert("RGB")
+				img = generate_ebsynth(input_dir+spread_file, video_dir+spread_file, video_dir+file)
+				src = Image.blend(src, img, a)
+				src.save(config.temp_file)
 
-		src.save(output_dir+file)
+		shutil.copy(config.temp_file, output_dir+file)
 
 def process_alpha_blend(input_dir, blend_dir, output_dir, alpha):
 	files = util.get_png_files(input_dir)
