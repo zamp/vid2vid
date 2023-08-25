@@ -1,1 +1,0 @@
-Put your video frame files here. All files have to be named 000.png where 000 is the frame number. 001.png, 002.png, 003.png etc.
