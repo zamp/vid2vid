@@ -1,19 +1,26 @@
-import config
-import shutil
-import os
 from PIL import Image
-from run_ebsynth import run_ebsynth
-from run_ebsynth import apply_ebsynth
-from run_ebsynth import generate_ebsynth_from
-import threading
 import comfyui
+import util
+import ebsynth
+import cv2
+import os
 
-def get_filename(i):
-	return str(i).zfill(3)+".png"
-def get_frame_dir(i):
-	return config.ebsynth_path+str(i).zfill(3)+"/"
+def generate_ebsynth(style_path, guide0_path, guide1_path):
+	if not os.path.exists(style_path):
+		print(f"ERROR: could not find file {style_path}")
+		return
+	if not os.path.exists(guide0_path):
+		print(f"ERROR: could not find file {guide0_path}")
+		return
+	if not os.path.exists(guide1_path):
+		print(f"ERROR: could not find file {guide1_path}")
+		return
 
-def run_stable_diffusion(input_file_path, src_file_path, output_file_path, cfg, denoise, positive_prompt, negative_prompt, workflow_json, model):
+	eb = ebsynth.ebsynth(style_path, [(guide0_path, guide1_path)])
+	result = cv2.cvtColor(eb.run(), cv2.COLOR_BGR2RGB)
+	return Image.fromarray(result)
+
+def run_stable_diffusion(input_file_path:str, src_file_path:str, output_file_path:str, cfg:int, denoise:float, positive_prompt:str, negative_prompt:str, workflow_json:str, model:str):
 	image = comfyui.process_image(input_file_path, src_file_path, cfg, denoise, positive_prompt, negative_prompt, workflow_json, model)
 	# for some reason the images come out different size than put in?
 	img = Image.open(input_file_path)
@@ -21,186 +28,45 @@ def run_stable_diffusion(input_file_path, src_file_path, output_file_path, cfg, 
 		image = image.resize((img.width, img.height))
 	image.save(output_file_path)
 
-def process_frames(frame_min, frame_max, temporal_blend, reinforce_source_alpha, cfg, denoise, positive_prompt, negative_prompt, workflow_json, model):
-	if temporal_blend > 0:
-		# delete old ebsynth files
-		if os.path.exists(config.ebsynth_path):
-			shutil.rmtree(config.ebsynth_path)
-		os.makedirs(config.ebsynth_path)
+def process_comfyui(input_dir:str, video_dir:str, output_dir:str, cfg:int, denoise:float, positive_prompt:str, negative_prompt:str, workflow_json:str, model:str):
+	files = util.get_png_files(input_dir)
+	for file in files:
+		run_stable_diffusion(input_dir+file, video_dir+file, output_dir+file, cfg, denoise, positive_prompt, negative_prompt, workflow_json, model)
 
-		# copy output to ebsynth directories
-		for i in range(frame_min, frame_max+1):
-			frame_dir = get_frame_dir(i)
-			if not os.path.exists(frame_dir):
-				os.makedirs(frame_dir)
-			shutil.copy(config.output_path+get_filename(i), frame_dir+get_filename(i))
+def clamp(num, min_value, max_value):
+   return max(min(num, max_value), min_value)
 
-	stable_diffusion_thread = None
+def process_ebsynth(input_dir, output_dir, alpha, frame_spread, spread_alpha_multiplier):
+	files = util.get_png_files(input_dir)
 
-	for i in range(frame_min, frame_max+1):
-		print(f"Processing frame: {get_filename(i)}")
+	min_frame, max_frame = util.get_min_max_frames(input_dir)
 
-		frame_path = config.output_path+get_filename(i)
-		video_frame_path = config.video_path+get_filename(i)
+	for file in files:
+		filename = file[:-4]
+		ext = file[-4:]
+		frame_number = int(filename)
 
-		if temporal_blend > 0 or reinforce_source_alpha > 0:			
-			run_ebsynth(i)
-			run_ebsynth(i+1)
-			run_ebsynth(i+2)
-			run_ebsynth(i-1)
-			run_ebsynth(i-2)
+		src = Image.open(input_dir+file).convert("RGB")
 
-			if stable_diffusion_thread != None:
-				stable_diffusion_thread.join() # wait for stable diffusion to complete
-				stable_diffusion_thread = None
+		sa = spread_alpha_multiplier*2
 
-			frame = Image.open(frame_path).convert("RGB")
+		for spread in range(1, frame_spread + 1):
+			a = alpha * (sa / spread)
+			
+			spread_file = f"{str(clamp(frame_number + spread, min_frame, max_frame)).zfill(len(filename))}{ext}"
+			img = generate_ebsynth(input_dir+spread_file, input_dir+spread_file, input_dir+file)
+			src = Image.blend(src, img, a)
 
-			if temporal_blend > 0.0:
-				frame = apply_ebsynth(frame, i - 1, 1, temporal_blend)
-				frame = apply_ebsynth(frame, i + 1, -1, temporal_blend)
-				frame = apply_ebsynth(frame, i - 2, 2, temporal_blend * 0.5)
-				frame = apply_ebsynth(frame, i + 2, -2, temporal_blend * 0.5)
+			spread_file = f"{str(clamp(frame_number - spread, min_frame, max_frame)).zfill(len(filename))}{ext}"
+			img = generate_ebsynth(input_dir+spread_file, input_dir+spread_file, input_dir+file)
+			src = Image.blend(src, img, a)
 
-			if reinforce_source_alpha > 0.0:
-				video_frame = Image.open(video_frame_path).convert("RGB")
-				frame = Image.blend(frame, video_frame, reinforce_source_alpha)
+		src.save(output_dir+file)
 
-			frame.save(frame_path)
-
-		if stable_diffusion_thread != None:
-			stable_diffusion_thread.join() # wait for stable diffusion to complete
-			stable_diffusion_thread = None
-		
-		stable_diffusion_thread = threading.Thread(target=run_stable_diffusion, args=(frame_path, video_frame_path, frame_path,cfg,denoise,positive_prompt,negative_prompt,workflow_json, model))
-		stable_diffusion_thread.start()
-
-		if config.debug_show_frame == i:
-			stable_diffusion_thread.join()
-			stable_diffusion_thread = None
-			frame = Image.open(frame_path).convert("RGB")
-			frame.show("frame")
-	stable_diffusion_thread.join()
-
-def append_frame_pairs(list_: list[int], start, end):
-    stack = [(start, end)]
-    
-    while stack:
-        start, end = stack.pop()
-        if abs(start - end) < 2:
-            continue
-        
-        middle = (start + end) // 2
-        list_.append((start, middle))
-        list_.append((middle, end))
-        
-        stack.append((start, middle))
-        stack.append((middle, end))
-	
-def alpha_blend_images(src, blend, dst, alpha):
-	src_img = Image.open(src).convert("RGB")
-	if alpha > 0.0:
-		blend_img = Image.open(blend).convert("RGB")
-		src_img = Image.blend(src_img, blend_img, alpha)
-	src_img.save(dst)
-
-def process_frames_fast_tb(frame_min, frame_max, temporal_blend, reinforce_source_alpha, cfg, denoise, positive_prompt, negative_prompt, workflow_json, model):
-	if temporal_blend > 0:
-		# delete old ebsynth files
-		if os.path.exists(config.ebsynth_path):
-			shutil.rmtree(config.ebsynth_path)
-		os.makedirs(config.ebsynth_path)
-
-		# copy output to ebsynth directories
-		for i in range(frame_min, frame_max+1):
-			frame_dir = get_frame_dir(i)
-			if not os.path.exists(frame_dir):
-				os.makedirs(frame_dir)
-			shutil.copy(config.output_path+get_filename(i), frame_dir+get_filename(i))
-		
-	# make frame pairs
-	pairs = []
-	append_frame_pairs(pairs, frame_min, frame_max)
-
-	#print(pairs)
-	threads = []
-
-	for (start,end) in pairs:
-		print(f"Processing frame pair {start}/{end}")
-		start_path = config.output_path+get_filename(start)
-		end_path = config.output_path+get_filename(end)
-
-		ebsynth_start_path = config.ebsynth_path+get_filename(start)
-		ebsynth_end_path = config.ebsynth_path+get_filename(end)
-
-		guide0_path = config.video_path+get_filename(start)
-		guide1_path = config.video_path+get_filename(end)
-
-		if temporal_blend > 0:
-			generate_ebsynth_from(start_path, guide0_path, guide1_path, ebsynth_start_path, True)
-			generate_ebsynth_from(end_path, guide1_path, guide0_path, ebsynth_end_path, True)
-
-			alpha_blend_images(start_path, ebsynth_start_path, ebsynth_start_path, temporal_blend)
-			alpha_blend_images(end_path, ebsynth_end_path, ebsynth_end_path, temporal_blend)
-		else:
-			print("fast_tb running with 0 temporal blend. This makes no sense! fast_tb will only work if temporal blend is > 0!")
-
-		for thread in threads:
-			thread.join()
-		threads.clear()
-
-		#threads.append(threading.Thread(target=run_stable_diffusion, args=(ebsynth_start_path, guide0_path, start_path,cfg,denoise,positive_prompt,negative_prompt,workflow_json, model)))
-		#threads.append(threading.Thread(target=run_stable_diffusion, args=(ebsynth_end_path, guide0_path, end_path,cfg,denoise,positive_prompt,negative_prompt,workflow_json, model)))		
-
-		for thread in threads:
-			thread.start()
-
-	for thread in threads:
-		thread.join()
-	return
-
-	for i in range(frame_min, frame_max+1):
-		print(f"Processing frame: {get_filename(i)}")
-
-		frame_path = config.output_path+get_filename(i)
-		video_frame_path = config.video_path+get_filename(i)
-
-		if temporal_blend > 0 or reinforce_source_alpha > 0:			
-			run_ebsynth(i)
-			run_ebsynth(i+1)
-			run_ebsynth(i+2)
-			run_ebsynth(i-1)
-			run_ebsynth(i-2)
-
-			if stable_diffusion_thread != None:
-				stable_diffusion_thread.join() # wait for stable diffusion to complete
-				stable_diffusion_thread = None
-
-			frame = Image.open(frame_path).convert("RGB")
-
-			if temporal_blend > 0.0:
-				frame = apply_ebsynth(frame, i - 1, 1, temporal_blend)
-				frame = apply_ebsynth(frame, i + 1, -1, temporal_blend)
-				frame = apply_ebsynth(frame, i - 2, 2, temporal_blend * 0.5)
-				frame = apply_ebsynth(frame, i + 2, -2, temporal_blend * 0.5)
-
-			if reinforce_source_alpha > 0.0:
-				video_frame = Image.open(video_frame_path).convert("RGB")
-				frame = Image.blend(frame, video_frame, reinforce_source_alpha)
-
-			frame.save(frame_path)
-
-		if stable_diffusion_thread != None:
-			stable_diffusion_thread.join() # wait for stable diffusion to complete
-			stable_diffusion_thread = None
-		
-		stable_diffusion_thread = threading.Thread(target=run_stable_diffusion, args=(frame_path, video_frame_path, frame_path,cfg,denoise,positive_prompt,negative_prompt,workflow_json, model))
-		stable_diffusion_thread.start()
-
-		if config.debug_show_frame == i:
-			stable_diffusion_thread.join()
-			stable_diffusion_thread = None
-			frame = Image.open(frame_path).convert("RGB")
-			frame.show("frame")
-	
-	stable_diffusion_thread.join()
+def process_alpha_blend(input_dir, blend_dir, output_dir, alpha):
+	files = util.get_png_files(input_dir)
+	for file in files:
+		src = Image.open(input_dir+file).convert("RGB")
+		img = Image.open(blend_dir+file).convert("RGB")
+		src = Image.blend(src, img, alpha)
+		src.save(output_dir+file)

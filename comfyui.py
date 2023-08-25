@@ -68,11 +68,11 @@ def connect():
 def close():
 	ws.close()
 
-def process_image(image_path, src_path, cfg, denoise, positive_prompt, negative_prompt, workflow_json, model):
+def process_image(image_path, video_path, cfg, denoise, positive_prompt, negative_prompt, workflow_json, model):
 	response = upload_image(image_path, "input.png")
 	file_name = response["name"]
-	if config.video_path != None:
-		upload_image(src_path, "video.png")
+	if config.upload_video_filename != None:
+		upload_image(video_path, config.upload_video_filename)
 
 	prompt = json.load(open(workflow_json))
 

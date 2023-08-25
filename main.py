@@ -4,72 +4,53 @@ import shutil
 from PIL import Image
 import comfyui
 import processors
-
-# ensure directories exist
-if not os.path.exists(config.output_path):
-	os.makedirs(config.output_path)
+import util
 
 try:
 	comfyui.connect()
 
-	files = os.listdir(config.video_path)
-	files = [f for f in files if os.path.isfile(config.video_path+f) and f.endswith(".png")]
+	#if os.path.exists(config.output_dir):
+	#	shutil.rmtree(config.output_dir)
+	if not os.path.exists(config.output_dir):
+		os.makedirs(config.output_dir)
 
-	frame_max = 0
-	for file in files:
-		frame_max = max(int(file[:3]), frame_max)
-
-	frame_min = frame_max
-	for file in files:
-		frame_min = min(int(file[:3]), frame_min)
+	frame_min,frame_max = util.get_min_max_frames(config.video_dir)
 
 	print("Processing files from frame: " + str(frame_min).zfill(3) + " to: " + str(frame_max).zfill(3))
 
-	for file in files:	
-		if os.path.exists(config.output_path+file):
-			continue
-
-		if config.width != None and config.height != None:			
-			img = Image.open(config.video_path+file)
-			if img.width != config.width or img.height != config.height:
-				print("\tResizing {} to {}x{}".format(config.video_path+file, config.width, config.height))
-				img = img.resize((config.width, config.height))
-				img.save(config.video_path+file)
-		
-		shutil.copy(config.video_path+file, config.output_path+file)
-
-	total_iterations = 0
-	iterations_run = 0
 	for render_pass in config.render_passes:
-		total_iterations += render_pass["iterations"]
-
-	for render_pass in config.render_passes:
-		multiplier = render_pass["it_multiplier"]
-		iterations = render_pass["iterations"]
-		name = render_pass["name"]
-		tp = render_pass["temporal_blend"]
-		rs = render_pass["reinforce_source"]
-		cfg = render_pass["cfg"]
-		denoise = render_pass["denoise"]
-		pp = render_pass["positive_prompt"]
-		np = render_pass["negative_prompt"]
-		wf = render_pass["workflow_json"]
-		mdl = render_pass["model"]
 		type = render_pass["type"]
 
-		print(f"Running render pass {name} ({type}) temporal blend: {tp} reinforce source: {rs} cfg: {cfg} denoise: {denoise}")
+		print(f"Executing render pass: {type}")
 		
-		for i in range(iterations):
-			if type == "default":
-				processors.process_frames(frame_min, frame_max, tp, rs, cfg, denoise, pp, np, wf, mdl)
-			elif type == "fast_tb":
-				processors.process_frames_fast_tb(frame_min, frame_max, tp, rs, cfg, denoise, pp, np, wf, mdl)
+		input_dir = render_pass["input_dir"]
+		output_dir = render_pass["output_dir"]
+		
+		util.copy_files_from_to(input_dir, config.temp_dir, ".png")
 
-			denoise *= multiplier
-			tp *= multiplier
-			rs *= multiplier
+		if type == "comfyui":
+			cfg = render_pass["cfg"]
+			denoise = render_pass["denoise"]
+			pos_prompt = render_pass["positive_prompt"]
+			neg_prompt = render_pass["negative_prompt"]
+			workflow = render_pass["workflow"]
+			model = render_pass["model"]
+			video_dir = render_pass["video_dir"]
+			
+			processors.process_comfyui(config.temp_dir, video_dir, output_dir, cfg, denoise, pos_prompt, neg_prompt, workflow, model)
 
-			iterations_run += 1
+		elif type == "ebsynth_blend":
+			alpha = render_pass["alpha"]
+			frame_spread = render_pass["frame_spread"]
+			spread_alpha_multiplier = render_pass["spread_alpha_multiplier"]
+			processors.process_ebsynth(config.temp_dir, output_dir, alpha, frame_spread, spread_alpha_multiplier)
+
+		elif type == "alpha_blend":
+			alpha = render_pass["alpha"]
+			blend_dir = render_pass["blend_dir"]
+			processors.process_alpha_blend(config.temp_dir, blend_dir, output_dir, alpha)
+
+	shutil.rmtree(config.temp_dir)
 
 	print("DONE!")
 finally:
