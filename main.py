@@ -47,10 +47,10 @@ try:
 		multiplier = render_pass["it_multiplier"]
 		iterations = render_pass["iterations"]
 		name = render_pass["name"]
-		tp = render_pass["temporal_blend"] * multiplier
-		rs = render_pass["reinforce_source"] * multiplier
+		tp = render_pass["temporal_blend"]
+		rs = render_pass["reinforce_source"]
 		cfg = render_pass["cfg"]
-		denoise = render_pass["denoise"] * multiplier
+		denoise = render_pass["denoise"]
 		pp = render_pass["positive_prompt"]
 		np = render_pass["negative_prompt"]
 		wf = render_pass["workflow_json"]
@@ -65,7 +65,9 @@ try:
 			elif type == "fast_tb":
 				processors.process_frames_fast_tb(frame_min, frame_max, tp, rs, cfg, denoise, pp, np, wf, mdl)
 
-			multiplier *= config.iteration_multiplier
+			denoise *= multiplier
+			tp *= multiplier
+			rs *= multiplier
 
 			iterations_run += 1
 
