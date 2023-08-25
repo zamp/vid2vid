@@ -36,9 +36,9 @@ Set your image loader to load "input.png" (optionally you can also have a loader
 
 Save it to the workflows directory.
 
-Change config to point to it.
+Change render_pass_default.py to point to it OR change the config.py render pass generators to also have workflow="your work flow path" as a parameter.
 
-It will try to find the sampler and positive/negative input fields automatically. But in case it can't find them you can change them in comfyui.py
+The script will try to find the sampler and positive/negative input fields automatically. But in case it can't find them you can change them in comfyui.py
 
 To automatically find positive and negative prompt fields save them with "positive_prompt" and "negative_prompt" in the text field.
 
@@ -48,7 +48,7 @@ Sampler: ```KSampler``` and ```BNK_TiledKSampler```
 Image loader: ```LoadImage```
 Model loader: ```CheckpointLoaderSimple```
 
-If the search fails for some reason you can set these numbers to whatever they're in the workflow_api.json (open the json with notepad or similar) OR you can disable sending these values to ComfyUI in the config.
+If the search fails for some reason you can set these numbers to whatever they're in the workflow_api.json (open the json with notepad or similar) OR you can disable sending these values to ComfyUI in the config/render_pass_defaults.
 ```
 sampler = "14"
 positive_input = "6"
