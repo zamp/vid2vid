@@ -16,9 +16,9 @@ pp = "masterpiece, perfect anime illustration, best quality, 8k, highres, "
 np = "(embedding:easynegative:1), low quality,"
 mdl = "flat2DAnimerge_v30.safetensors"
 
-pp = None # Uncomment to not override workflow value and just use what's in workflow
-np = None # Uncomment to not override workflow value and just use what's in workflow
-mdl = None # Uncomment to not override workflow value and just use what's in workflow
+#pp = None # Uncomment to not override workflow value and just use what's in workflow
+#np = None # Uncomment to not override workflow value and just use what's in workflow
+#mdl = None # Uncomment to not override workflow value and just use what's in workflow
 
 # Modify the values of these as you see fit, explanation is below
 render_passes = [
