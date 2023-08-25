@@ -1,14 +1,18 @@
-# setting this to a positive value will show that frame every time it is generated
+# Setting this to a positive value will show that frame every time it is generated
 debug_show_frame = -1
+
+# set these to scale source video to this resolution, set to None to disable scaling
+width = None
+height = None
 
 video_path = "video/"
 output_path = "output/"
 ebsynth_path = "ebsynth/"
-seed = -1 # set to -1 for random or a value between 0 and 18446744073709551616
+seed = -1 # Set to -1 for random or a value between 0 and 18446744073709551616
 comfyui_server_address = "127.0.0.1:8188"
 
 upload_input_filename = "input.png"
-upload_video_filename = None # set to ex. "video.png" if you want the current video frame to be uploaded to comfyui
+upload_video_filename = None # Set to ex. "video.png" if you want the current video frame to be uploaded to comfyui
 
 wf = "workflows/workflow_api.json"
 pp = "YOUR POSITIVE PROMPT HERE" # Set to None to not override workflow value and just use what's in workflow
