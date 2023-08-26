@@ -5,7 +5,8 @@ from ebsynth import EBSynthProject
 import os
 import shutil
 import subprocess
-import numpy as np
+import threading
+import ebsynth_window
 
 def run_stable_diffusion(input_file_path:str, src_file_path:str, output_file_path:str, cfg:int, denoise:float, positive_prompt:str, negative_prompt:str, workflow_json:str, model:str):
 	image = comfyui.process_image(input_file_path, src_file_path, cfg, denoise, positive_prompt, negative_prompt, workflow_json, model)
@@ -44,7 +45,13 @@ def blend_img(ebsynth_dir, input_dir, frame, offset_frame, file_name_length, ext
 	output_img = Image.blend(output_img, warped_img, a)
 	output_img.save(f"{input_dir}{str(frame).zfill(file_name_length)}{ext}")
 
-def run_ebsynth(project, ebsynth_exe):
+def wait_for_ebsynth_to_complete(automatic, process:subprocess.Popen):
+	if automatic:
+		ebsynth_window.wait_and_kill()
+	else:
+		process.wait()
+
+def run_ebsynth(automatic, project, ebsynth_exe):
 	if not os.path.exists(ebsynth_exe):
 		print("Error: Could not find ebsynth executable.")
 
@@ -52,12 +59,14 @@ def run_ebsynth(project, ebsynth_exe):
 	project.WriteToFile(ebs_file)
 
 	# TODO: make this script press Run-All button and wait for processing to complete
-	o = subprocess.Popen(['cmd','/c',f"{ebsynth_exe} {os.path.abspath(ebs_file)}"])
-	o.wait()
-
+	process = subprocess.Popen(['cmd','/c',f"{ebsynth_exe} {os.path.abspath(ebs_file)}"])	
+	thread = threading.Thread(target=wait_for_ebsynth_to_complete, args=[automatic, process])
+	thread.start()
+	thread.join()
+	
 	os.remove(ebs_file)
 
-def process_ebsynth(max_ebsynth_files:int, ebsynth_exe:str, ebsynth_dir:str, input_dir:str, output_dir:str, video_dir:str, alpha:float, frame_spread:int, spread_alpha_multiplier:float):
+def process_ebsynth(automatic:bool, max_ebsynth_files:int, ebsynth_exe:str, ebsynth_dir:str, input_dir:str, output_dir:str, video_dir:str, alpha:float, frame_spread:int, spread_alpha_multiplier:float):
 	if os.path.exists(ebsynth_dir):
 		shutil.rmtree(ebsynth_dir)
 	os.makedirs(ebsynth_dir)
@@ -101,10 +110,10 @@ def process_ebsynth(max_ebsynth_files:int, ebsynth_exe:str, ebsynth_dir:str, inp
 		project.AddKeyFrame(use_min_frame, use_max_frame, minframe, frame, maxframe, ebsynth_output_dir)
 
 		if len(project.keyFrames) >= max_ebsynth_files:
-			run_ebsynth(project, ebsynth_exe)
+			run_ebsynth(automatic, project, ebsynth_exe)
 			project.keyFrames = []
 
-	run_ebsynth(project, ebsynth_exe)
+	run_ebsynth(automatic, project, ebsynth_exe)
 
 	# blend ebsynth files now that they are generated
 	for file in input_files:

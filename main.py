@@ -57,7 +57,8 @@ def main():
 			ebsynth_dir = defaults.get("EbsynthDir")
 			ebsynth_exe = defaults.get("EbsynthExe")
 			max_files = defaults.getint("MaxEbsynthFiles")
-			processors.process_ebsynth(max_files, ebsynth_exe, ebsynth_dir, temp_dir, output_dir, video_dir, alpha, frame_spread, spread_alpha_multiplier)
+			automatic = defaults.getboolean("AutomateEbsynth")
+			processors.process_ebsynth(automatic, max_files, ebsynth_exe, ebsynth_dir, temp_dir, output_dir, video_dir, alpha, frame_spread, spread_alpha_multiplier)
 
 		elif type == "alpha_blend":
 			alpha = render_pass.getfloat("Alpha")

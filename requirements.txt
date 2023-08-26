@@ -1,3 +1,5 @@
 pillow
 scipy
 websocket-client
+pynput
+wmi
