@@ -68,7 +68,8 @@ def get_images(ws, prompt):
 	return output_images
 
 def connect():
-	ws.connect("ws://{}/ws?clientId={}".format(defaults.get("ComfyUI_ServerAddress"), client_id))
+	address = defaults.get("ComfyUI_ServerAddress")
+	ws.connect(f"ws://{address}/ws?clientId={client_id}")
 
 def close():
 	ws.close()

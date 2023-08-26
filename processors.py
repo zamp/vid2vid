@@ -87,16 +87,16 @@ def process_ebsynth(max_ebsynth_files:int, ebsynth_exe:str, ebsynth_dir:str, inp
 		use_min_frame = True
 		use_max_frame = True
 
-		if minframe <= min_frame:
+		if minframe < min_frame:
 			minframe = min_frame
 			use_min_frame = False
-		if maxframe >= max_frame:
+		if maxframe > max_frame:
 			maxframe = max_frame
 			use_max_frame = False
 
 		project.AddKeyFrame(use_min_frame, use_max_frame, minframe, frame, maxframe, ebsynth_output_dir)
 
-		if len(project.keyFrames) >= max_ebsynth_files:			
+		if len(project.keyFrames) >= max_ebsynth_files:
 			run_ebsynth(project, ebsynth_exe)
 
 	run_ebsynth(project, ebsynth_exe)
