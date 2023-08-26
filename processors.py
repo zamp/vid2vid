@@ -102,6 +102,7 @@ def process_ebsynth(max_ebsynth_files:int, ebsynth_exe:str, ebsynth_dir:str, inp
 
 		if len(project.keyFrames) >= max_ebsynth_files:
 			run_ebsynth(project, ebsynth_exe)
+			project.keyFrames = []
 
 	run_ebsynth(project, ebsynth_exe)
 
