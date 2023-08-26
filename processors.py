@@ -45,10 +45,11 @@ def blend_img(ebsynth_dir, input_dir, frame, offset_frame, file_name_length, ext
 	output_img.save(f"{input_dir}{str(frame).zfill(file_name_length)}{ext}")
 
 def run_ebsynth(project, ebsynth_exe):
+	if not os.path.exists(ebsynth_exe):
+		print("Error: Could not find ebsynth executable.")
+
 	ebs_file = "generated.ebs"
 	project.WriteToFile(ebs_file)
-
-	project.keyFrames = []
 
 	# TODO: make this script press Run-All button and wait for processing to complete
 	o = subprocess.Popen(['cmd','/c',f"{ebsynth_exe} {os.path.abspath(ebs_file)}"])
@@ -75,6 +76,7 @@ def process_ebsynth(max_ebsynth_files:int, ebsynth_exe:str, ebsynth_dir:str, inp
 	video_path = f"{video_dir}[{filenumber_hashes}]{ext}"
 
 	project = EBSynthProject(video_path, keys_path, "", False)
+	project.keyFrames = []
 
 	for file in input_files:
 		frame = int(file[:-4])
@@ -89,10 +91,12 @@ def process_ebsynth(max_ebsynth_files:int, ebsynth_exe:str, ebsynth_dir:str, inp
 
 		if minframe < min_frame:
 			minframe = min_frame
-			use_min_frame = False
+			if minframe == frame:
+				use_min_frame = False
 		if maxframe > max_frame:
 			maxframe = max_frame
-			use_max_frame = False
+			if maxframe == frame:
+				use_max_frame = False
 
 		project.AddKeyFrame(use_min_frame, use_max_frame, minframe, frame, maxframe, ebsynth_output_dir)
 
