@@ -30,7 +30,7 @@ def main():
 
 		type = render_pass.get("Type")
 
-		print(f"Executing render pass: {type}")
+		print(f"Executing render pass: {cfg} ({type})")
 		
 		input_dir = render_pass.get("InputDir")
 		output_dir = render_pass.get("OutputDir")
@@ -47,7 +47,7 @@ def main():
 			neg_prompt = render_pass.get("NegativePrompt")
 			workflow = render_pass.get("Workflow")
 			model = render_pass.get("Model")
-			video_dir = render_pass.get("VideoDir")			
+			video_dir = render_pass.get("VideoDir")
 			processors.process_comfyui(temp_dir, video_dir, output_dir, cfg, denoise, pos_prompt, neg_prompt, workflow, model)
 
 		elif type == "ebsynth_blend":
