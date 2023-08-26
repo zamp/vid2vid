@@ -8,6 +8,8 @@ Clone the repo somewhere and run
 
 ```pip install -r "requirements.txt"```
 
+Install EbSynth somewhere. Get it from https://ebsynth.com/
+
 ## How to run
 
 Start ComfyUI.
@@ -16,11 +18,12 @@ Put your video files in video directory. All files have to be named 000.png wher
 
 Files have to be sequential and cannot have gaps!
 
-Rename example.config.py to config.py and tweak it to your liking.
+Create a config.ini file 
+Rename example.config.ini to config.py and tweak it to your liking.
 
 Either run "run.bat" or "python main.py" from command line.
 
-When re-running please delete output and ebsynth directories before firing it up again.
+Whenever ebsynth pops up press Run All and once done close it.
 
 To run the provided workflow_api.json you need to have Flat-2D Animerge model installed. You can get it from https://civitai.com/models/35960/flat-2d-animerge. You can also just change the json to point to some other model or create your own workflow which is explained below.
 

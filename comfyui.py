@@ -8,7 +8,6 @@ import io
 import random
 import requests
 import configparser
-import os
 
 client_id = str(uuid.uuid4())
 ws = websocket.WebSocket()
