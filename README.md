@@ -1,4 +1,4 @@
-# comfy-temporal-stability
+# temporal-stability [Ebsynth + ComfyUI]
 
 This is a python script that uses ebsynth to stabilize video made with stable diffusion.
 
