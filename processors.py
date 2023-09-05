@@ -8,18 +8,18 @@ import subprocess
 import threading
 import ebsynth_window
 
-def run_stable_diffusion(input_file_path:str, src_file_path:str, output_file_path:str, cfg:int, denoise:float, positive_prompt:str, negative_prompt:str, workflow_json:str, model:str):
-	image = comfyui.process_image(input_file_path, src_file_path, cfg, denoise, positive_prompt, negative_prompt, workflow_json, model)
+def run_stable_diffusion(input_file_path:str, src_file_path:str, output_file_path:str, cfg:int, denoise:float, positive_prompt:str, negative_prompt:str, workflow_json:str, model:str, seed:int):
+	image = comfyui.process_image(input_file_path, src_file_path, cfg, denoise, positive_prompt, negative_prompt, workflow_json, model, seed)
 	# for some reason the images come out different size than put in?
 	img = Image.open(input_file_path)
 	if img.width != image.width or img.height != image.height:
 		image = image.resize((img.width, img.height))
 	image.save(output_file_path)
 
-def process_comfyui(input_dir:str, video_dir:str, output_dir:str, cfg:int, denoise:float, positive_prompt:str, negative_prompt:str, workflow_json:str, model:str):
+def process_comfyui(input_dir:str, video_dir:str, output_dir:str, cfg:int, denoise:float, positive_prompt:str, negative_prompt:str, workflow_json:str, model:str, node_id:int, seed:int):
 	files = util.get_png_files(input_dir)
 	for file in files:
-		run_stable_diffusion(input_dir+file, video_dir+file, output_dir+file, cfg, denoise, positive_prompt, negative_prompt, workflow_json, model)
+		run_stable_diffusion(input_dir+file, video_dir+file, output_dir+file, cfg, denoise, positive_prompt, negative_prompt, workflow_json, model, seed)
 
 def clamp(num, min_value, max_value):
    return max(min(num, max_value), min_value)	

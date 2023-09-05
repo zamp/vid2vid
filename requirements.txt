@@ -3,3 +3,4 @@ scipy
 websocket-client
 pynput
 wmi
+requests

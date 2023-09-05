@@ -41,31 +41,31 @@ def upload_image(image_path, filename):
 	return json.loads(result.text)
 
 def get_images(ws, prompt):
-	prompt_id = queue_prompt(prompt)['prompt_id']
-	output_images = {}
-	while True:
-		out = ws.recv()
-		if isinstance(out, str):
-			message = json.loads(out)
-			if message['type'] == 'executing':
-				data = message['data']
-				if data['node'] is None and data['prompt_id'] == prompt_id:
-					break #Execution is done
-		else:
-			continue #previews are binary data
+    prompt_id = queue_prompt(prompt)['prompt_id']
+    output_images = {}  # Initialize the output_images dictionary
+    while True:
+        out = ws.recv()
+        if isinstance(out, str):
+            message = json.loads(out)
+            if message['type'] == 'executing':
+                data = message['data']
+                if data['node'] is None and data['prompt_id'] == prompt_id:
+                    break  # Execution is done
+        else:
+            continue  # previews are binary data
 
-	history = get_history(prompt_id)[prompt_id]
-	for o in history['outputs']:
-		for node_id in history['outputs']:
-			node_output = history['outputs'][node_id]
-			if 'images' in node_output:
-				images_output = []
-				for image in node_output['images']:
-					image_data = get_image(image['filename'], image['subfolder'], image['type'])
-					images_output.append(image_data)
-			output_images[node_id] = images_output
+    history = get_history(prompt_id)[prompt_id]
+    for node_id in history['outputs']:
+        node_output = history['outputs'][node_id]
+        if 'images' in node_output:
+            images_output = []
+            for image in node_output['images']:
+                image_data = get_image(image['filename'], image['subfolder'], image['type'])
+                images_output.append(image_data)
+            output_images[node_id] = images_output
 
-	return output_images
+    return output_images
+
 
 def connect():
 	address = defaults.get("ComfyUI_ServerAddress")
@@ -74,7 +74,7 @@ def connect():
 def close():
 	ws.close()
 
-def process_image(image_path, video_path, cfg, denoise, positive_prompt, negative_prompt, workflow_json, model):
+def process_image(image_path, video_path, cfg, denoise, positive_prompt, negative_prompt, workflow_json, model, seed):
 	upload_image(image_path, "input.png")	
 	if defaults.getboolean("UploadVideoFile"):
 		upload_image(video_path, defaults.get("UploadVideoFileName"))
@@ -104,11 +104,33 @@ def process_image(image_path, video_path, cfg, denoise, positive_prompt, negativ
 			if prompt[key][INPUTS]["text"] == "negative_prompt":
 				negative_input = key
 
-	seed = defaults.getint("Seed")
-	if seed == -1:
-		prompt[sampler][INPUTS]["seed"] = random.randint(1,18446744073709551616)
-	else:
-		prompt[sampler][INPUTS]["seed"] = seed
+	# if seed == None:
+	# 	prompt[sampler][INPUTS]["seed"] = random.randint(1,18446744073709551616)
+	# 	print(prompt[sampler][INPUTS]["seed"])
+			
+	# else:
+	#  	prompt[sampler][INPUTS]["Seed"] = seed
+	#  	print(seed)
+
+	if seed == None:
+		seed = random.randint(1,18446744073709551616)
+	
+	prompt[sampler][INPUTS]["Seed"] = seed
+
+	print("Seed: " + str(seed))
+
+
+	# if seed != None:
+	# 	seed = defaults.getint("Seed")
+
+	# if seed == -1:
+	# 	prompt[sampler][INPUTS]["seed"] = random.randint(1,18446744073709551616)
+	# 	print(prompt[sampler][INPUTS]["seed"])
+	# else:
+	# 	prompt[sampler][INPUTS]["seed"] = seed
+	# 	print(seed)
+
+	
 
 	prompt[sampler][INPUTS]["cfg"] = cfg
 	prompt[sampler][INPUTS]["denoise"] = denoise
