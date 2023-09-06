@@ -20,19 +20,17 @@ def fix_config(config):
 			arr = line.split(".")
 			if len(arr) < 3:
 				arr.append(0)
-			arr[2] = f"{uuid.uuid4()}]"
-			lines[index] = f"[{'.'.join(arr)}]"
+			arr[2] = f"{uuid.uuid4()}"
+			lines[index] = f"[{'.'.join(arr)}]\r\n"
 
 	file.close()
-	return lines	
+	return "".join(lines)
 
 def main():
-	lines = fix_config("example.config.ini")
-	config_lines = fix_config("config.ini")
-	lines = lines + config_lines
-
 	config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-	config.read_string("".join(lines))
+
+	config.read_string(fix_config("example.config.ini"))
+	config.read_string(fix_config("config.ini"))
 
 	defaults = config["DEFAULT"]
 
