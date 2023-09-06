@@ -1,7 +1,7 @@
 {
   "4": {
     "inputs": {
-      "ckpt_name": "anyloraCheckpoint_bakedvaeBlessedFp16.safetensors"
+      "ckpt_name": "flat2DAnimerge_v30.safetensors"
     },
     "class_type": "CheckpointLoaderSimple"
   },
@@ -55,7 +55,7 @@
       "cfg": 14,
       "sampler_name": "euler_ancestral",
       "scheduler": "exponential",
-      "denoise": 0.7499999999999998,
+      "denoise": 0.6999999999999997,
       "model": [
         "96",
         0
@@ -91,8 +91,8 @@
         0
       ],
       "clip": [
-        "172",
-        1
+        "162",
+        0
       ]
     },
     "class_type": "CLIPTextEncode"
@@ -101,8 +101,8 @@
     "inputs": {
       "text": "wrinkles, (embedding:easynegative:1), (embedding:verybadimagenegative_v1.3:1), (embedding:bad-hands-5:1), (((letters))), players, (sketch), skin defects, (dots:1.2), (acne:1.3), ((scratches, glasses, sunglasses)), lowres, (text,words:1.3),watermark,(simple background), abstract, glitch,jpeg-artifact, grayscale, 1girl, girl solo, girl, female, woman, feminine",
       "clip": [
-        "172",
-        1
+        "162",
+        0
       ]
     },
     "class_type": "CLIPTextEncode"
@@ -133,7 +133,7 @@
   },
   "72": {
     "inputs": {
-      "strength": 0.6999993896484364,
+      "strength": 0.7299993896484358,
       "conditioning": [
         "63",
         0
@@ -194,7 +194,7 @@
     "inputs": {
       "multiplier": 0.4500000000000023,
       "model": [
-        "172",
+        "4",
         0
       ]
     },
@@ -234,7 +234,7 @@
   },
   "123": {
     "inputs": {
-      "Text": "(anime style) genji from overwatch, genji, genji helmet, genji samurai, "
+      "Text": "(anime style) "
     },
     "class_type": "Text box"
   },
@@ -284,7 +284,6 @@
       "threshold": 0.35,
       "character_threshold": 0.5999999999999998,
       "exclude_tags": "mustache, moustache, beard, facial_hair, blurry, wrinkles, (embedding:easynegative:1), (embedding:verybadimagenegative_v1.3:1), (embedding:bad-hands-5:1), (((letters))), players, (sketch), skin defects, (dots:1.2), (acne:1.3), scratches, lowres, (text,words:1.3),watermark,(simple background), abstract, glitch,jpeg-artifact, grayscale, 1girl, girl solo, girl, female, woman, feminine, sunset",
-      "tags": "shirt, gloves, holding, closed_eyes, white_shirt, male_focus, multiple_boys, glasses, 2boys, helmet, sportswear, baseball_bat, holding_baseball_bat",
       "image": [
         "10",
         0
@@ -361,17 +360,9 @@
   },
   "172": {
     "inputs": {
-      "lora_name": "OWgenji12(1)CIVIT.safetensors",
-      "strength_model": 2.0266671752929954,
-      "strength_clip": 0.5533334350585918,
-      "model": [
-        "4",
-        0
-      ],
-      "clip": [
-        "162",
-        0
-      ]
+      "lora_name": "jim_lee_offset_right_filesize.safetensors",
+      "strength_model": 1.3000000000000052,
+      "strength_clip": 0.8599999999999983
     },
     "class_type": "LoraLoader"
   }
