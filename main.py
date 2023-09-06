@@ -26,6 +26,7 @@ def main():
 			continue
 
 		render_pass = config[cfg]
+		node_id = render_pass.get("NodeId")  # Extract node_id from the configuration
 
 		type = render_pass.get("Type")
 
@@ -40,14 +41,17 @@ def main():
 		util.copy_files_from_to(input_dir, temp_dir, ".png")
 
 		if type == "comfyui":
-			cfg = render_pass.get("Cfg")
-			denoise = render_pass.get("Denoise")
+
+			seed = render_pass.get("Seed")
+
+			cfg = render_pass.getint("Cfg")
+			denoise = render_pass.getfloat("Denoise")
 			pos_prompt = render_pass.get("PositivePrompt")
 			neg_prompt = render_pass.get("NegativePrompt")
 			workflow = render_pass.get("Workflow")
 			model = render_pass.get("Model")
 			video_dir = render_pass.get("VideoDir")
-			processors.process_comfyui(temp_dir, video_dir, output_dir, cfg, denoise, pos_prompt, neg_prompt, workflow, model)
+			processors.process_comfyui(temp_dir, video_dir, output_dir, cfg, denoise, pos_prompt, neg_prompt, workflow, model, node_id, seed)
 
 		elif type == "ebsynth_blend":
 			alpha = render_pass.getfloat("Alpha")

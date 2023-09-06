@@ -12,8 +12,8 @@
         0
       ],
       "vae": [
-        "4",
-        2
+        "77",
+        0
       ]
     },
     "class_type": "VAEDecode"
@@ -22,7 +22,7 @@
     "inputs": {
       "filename_prefix": "ComfyUI",
       "images": [
-        "8",
+        "82",
         0
       ]
     },
@@ -42,26 +42,26 @@
         0
       ],
       "vae": [
-        "4",
-        2
+        "77",
+        0
       ]
     },
     "class_type": "VAEEncode"
   },
   "14": {
     "inputs": {
-      "seed": 87816930673756,
+      "seed": 907640326534677,
       "steps": 20,
-      "cfg": 8,
+      "cfg": 14,
       "sampler_name": "euler_ancestral",
-      "scheduler": "normal",
-      "denoise": 0.3099999999999994,
+      "scheduler": "exponential",
+      "denoise": 0.6999999999999997,
       "model": [
-        "4",
+        "96",
         0
       ],
       "positive": [
-        "31",
+        "156",
         0
       ],
       "negative": [
@@ -78,7 +78,7 @@
   "24": {
     "inputs": {
       "images": [
-        "8",
+        "82",
         0
       ]
     },
@@ -86,22 +86,284 @@
   },
   "31": {
     "inputs": {
-      "text": "positive_prompt",
+      "text": [
+        "130",
+        0
+      ],
       "clip": [
-        "4",
-        1
+        "162",
+        0
       ]
     },
     "class_type": "CLIPTextEncode"
   },
   "32": {
     "inputs": {
-      "text": "negative_prompt",
+      "text": "wrinkles, (embedding:easynegative:1), (embedding:verybadimagenegative_v1.3:1), (embedding:bad-hands-5:1), (((letters))), players, (sketch), skin defects, (dots:1.2), (acne:1.3), ((scratches, glasses, sunglasses)), lowres, (text,words:1.3),watermark,(simple background), abstract, glitch,jpeg-artifact, grayscale, 1girl, girl solo, girl, female, woman, feminine",
+      "clip": [
+        "162",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode"
+  },
+  "63": {
+    "inputs": {
+      "strength": 0.9000000000000015,
+      "conditioning": [
+        "31",
+        0
+      ],
+      "control_net": [
+        "64",
+        0
+      ],
+      "image": [
+        "155",
+        0
+      ]
+    },
+    "class_type": "ControlNetApply"
+  },
+  "64": {
+    "inputs": {
+      "control_net_name": "control_v11p_sd15_openpose.pth"
+    },
+    "class_type": "ControlNetLoader"
+  },
+  "72": {
+    "inputs": {
+      "strength": 0.7299993896484358,
+      "conditioning": [
+        "63",
+        0
+      ],
+      "control_net": [
+        "73",
+        0
+      ],
+      "image": [
+        "81",
+        0
+      ]
+    },
+    "class_type": "ControlNetApply"
+  },
+  "73": {
+    "inputs": {
+      "control_net_name": "controlnet11Models_tileE.safetensors"
+    },
+    "class_type": "ControlNetLoader"
+  },
+  "77": {
+    "inputs": {
+      "vae_name": "diffusion_pytorch_model.safetensors"
+    },
+    "class_type": "VAELoader"
+  },
+  "81": {
+    "inputs": {
+      "pyrUp_iters": 2,
+      "image": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "TilePreprocessor"
+  },
+  "82": {
+    "inputs": {
+      "upscale_model": [
+        "83",
+        0
+      ],
+      "image": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "ImageUpscaleWithModel"
+  },
+  "83": {
+    "inputs": {
+      "model_name": "RealESRGAN_x4plus_anime_6B.pth"
+    },
+    "class_type": "UpscaleModelLoader"
+  },
+  "96": {
+    "inputs": {
+      "multiplier": 0.4500000000000023,
+      "model": [
+        "4",
+        0
+      ]
+    },
+    "class_type": "ModelSamplerTonemapNoiseTest"
+  },
+  "97": {
+    "inputs": {
+      "text": "positive_prompt"
+    },
+    "class_type": "CLIPTextEncode"
+  },
+  "98": {
+    "inputs": {
+      "text": "negative_prompt"
+    },
+    "class_type": "CLIPTextEncode"
+  },
+  "110": {
+    "inputs": {
+      "linebreak_addition": "false",
+      "text_a": [
+        "125",
+        0
+      ],
+      "text_b": [
+        "122",
+        0
+      ]
+    },
+    "class_type": "Text Concatenate"
+  },
+  "122": {
+    "inputs": {
+      "Text": "sharp details, crisp details, 8k render, (ultra high quality:1.2)"
+    },
+    "class_type": "Text box"
+  },
+  "123": {
+    "inputs": {
+      "Text": "(anime style) "
+    },
+    "class_type": "Text box"
+  },
+  "125": {
+    "inputs": {
+      "Text": ", fence in the background, "
+    },
+    "class_type": "Text box"
+  },
+  "129": {
+    "inputs": {
+      "Text": "masterpiece, high quality, best quality, the most beautiful digital painting of "
+    },
+    "class_type": "Text box"
+  },
+  "130": {
+    "inputs": {
+      "linebreak_addition": "false",
+      "text_a": [
+        "123",
+        0
+      ],
+      "text_b": [
+        "129",
+        0
+      ],
+      "text_c": [
+        "147",
+        0
+      ],
+      "text_d": [
+        "110",
+        0
+      ]
+    },
+    "class_type": "Text Concatenate"
+  },
+  "141": {
+    "inputs": {
+      "text": "pixar style the most beautiful digital art of a male baseball player wearing a cap and a shirt, other baseball players and (trees:1.1) in the background, sharp details, empty baseball playing field, crisp details, 8k render, (ultra high quality:1.2)"
+    },
+    "class_type": "CLIPTextEncode"
+  },
+  "147": {
+    "inputs": {
+      "model": "wd-v1-4-moat-tagger-v2",
+      "threshold": 0.35,
+      "character_threshold": 0.5999999999999998,
+      "exclude_tags": "mustache, moustache, beard, facial_hair, blurry, wrinkles, (embedding:easynegative:1), (embedding:verybadimagenegative_v1.3:1), (embedding:bad-hands-5:1), (((letters))), players, (sketch), skin defects, (dots:1.2), (acne:1.3), scratches, lowres, (text,words:1.3),watermark,(simple background), abstract, glitch,jpeg-artifact, grayscale, 1girl, girl solo, girl, female, woman, feminine, sunset",
+      "image": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "WD14Tagger|pysssss"
+  },
+  "150": {
+    "inputs": {
+      "text": [
+        "130",
+        0
+      ]
+    },
+    "class_type": "ShowText|pysssss"
+  },
+  "155": {
+    "inputs": {
+      "detect_hand": "enable",
+      "detect_body": "enable",
+      "detect_face": "enable",
+      "image": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "DWPreprocessor"
+  },
+  "156": {
+    "inputs": {
+      "strength": 0.619999389648435,
+      "conditioning": [
+        "72",
+        0
+      ],
+      "control_net": [
+        "157",
+        0
+      ],
+      "image": [
+        "169",
+        0
+      ]
+    },
+    "class_type": "ControlNetApply"
+  },
+  "157": {
+    "inputs": {
+      "control_net_name": "control_depth-fp16.safetensors"
+    },
+    "class_type": "ControlNetLoader"
+  },
+  "162": {
+    "inputs": {
+      "stop_at_clip_layer": -2,
       "clip": [
         "4",
         1
       ]
     },
-    "class_type": "CLIPTextEncode"
+    "class_type": "CLIPSetLastLayer"
+  },
+  "169": {
+    "inputs": {
+      "rm_nearest": 0,
+      "rm_background": 0,
+      "boost": "disable",
+      "image": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "LeReS-DepthMapPreprocessor"
+  },
+  "172": {
+    "inputs": {
+      "lora_name": "jim_lee_offset_right_filesize.safetensors",
+      "strength_model": 1.3000000000000052,
+      "strength_clip": 0.8599999999999983
+    },
+    "class_type": "LoraLoader"
   }
 }
