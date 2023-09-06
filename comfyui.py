@@ -7,42 +7,36 @@ from PIL import Image
 import io
 import random
 import requests
-import configparser
 from configparser import SectionProxy
 
 client_id = str(uuid.uuid4())
 ws = websocket.WebSocket()
 
-config = configparser.ConfigParser()
-config.read(["example.config.ini", "config.ini"])
-
-defaults = config["DEFAULT"]
-
-def queue_prompt(prompt):
+def queue_prompt(server_addr, prompt):
 	p = {"prompt": prompt, "client_id": client_id}
 	data = json.dumps(p).encode('utf-8')
-	req =  urllib.request.Request("http://{}/prompt".format(defaults.get("ComfyUI_ServerAddress")), data=data)
+	req =  urllib.request.Request("http://{}/prompt".format(server_addr), data=data)
 	return json.loads(urllib.request.urlopen(req).read())
 
-def get_image(filename, subfolder, folder_type):
+def get_image(server_addr, filename, subfolder, folder_type):
 	data = {"filename": filename, "subfolder": subfolder, "type": folder_type}
 	url_values = urllib.parse.urlencode(data)
-	with urllib.request.urlopen("http://{}/view?{}".format(defaults.get("ComfyUI_ServerAddress"), url_values)) as response:
+	with urllib.request.urlopen("http://{}/view?{}".format(server_addr, url_values)) as response:
 		return response.read()
 
-def get_history(prompt_id):
-	with urllib.request.urlopen("http://{}/history/{}".format(defaults.get("ComfyUI_ServerAddress"), prompt_id)) as response:
+def get_history(server_addr, prompt_id):
+	with urllib.request.urlopen("http://{}/history/{}".format(server_addr, prompt_id)) as response:
 		return json.loads(response.read())
 	
-def upload_image(image_path, filename):
+def upload_image(server_addr, image_path, filename):
 	files = {"image": (filename, open(image_path, 'rb'), 'image/png', {'Expires': '0'})}
 	data = {"overwrite": "true"}
-	result = requests.post("http://{}/upload/image".format(defaults.get("ComfyUI_ServerAddress")), files=files, data=data)
+	result = requests.post("http://{}/upload/image".format(server_addr), files=files, data=data)
 	#print(result.text)
 	return json.loads(result.text)
 
-def get_images(ws, prompt):
-	prompt_id = queue_prompt(prompt)['prompt_id']
+def get_images(server_addr, ws, prompt):
+	prompt_id = queue_prompt(server_addr, prompt)['prompt_id']
 	output_images = {}
 	while True:
 		out = ws.recv()
@@ -55,21 +49,20 @@ def get_images(ws, prompt):
 		else:
 			continue #previews are binary data
 
-	history = get_history(prompt_id)[prompt_id]	
+	history = get_history(server_addr, prompt_id)[prompt_id]	
 	for node_id in history['outputs']:
 		node_output = history['outputs'][node_id]
 		if 'images' in node_output:
 			images_output = []
 			for image in node_output['images']:
-				image_data = get_image(image['filename'], image['subfolder'], image['type'])
+				image_data = get_image(server_addr, image['filename'], image['subfolder'], image['type'])
 				images_output.append(image_data)
 		output_images[node_id] = images_output
 
 	return output_images
 
-def connect():
-	address = defaults.get("ComfyUI_ServerAddress")
-	ws.connect(f"ws://{address}/ws?clientId={client_id}")
+def connect(server_addr):	
+	ws.connect(f"ws://{server_addr}/ws?clientId={client_id}")
 
 def close():
 	ws.close()
@@ -91,7 +84,7 @@ def get_api_id(json, title):
 			return key
 	return -1
 
-def process_image(image_path, video_path, config:SectionProxy):
+def process_image(image_path:str, video_path, config:SectionProxy):
 	# get config values	
 	workflow = config.get("Workflow")
 
@@ -103,7 +96,7 @@ def process_image(image_path, video_path, config:SectionProxy):
 			(title, input) = parse_key(workflow_json, key)
 			if title == None or input == None:
 				continue
-			
+
 			api_id = get_api_id(workflow_json, title)
 			value = config.get(key)			
 
@@ -118,11 +111,12 @@ def process_image(image_path, video_path, config:SectionProxy):
 			else:
 				workflow_json[api_id][input] = value
 
-	upload_image(image_path, "input.png")
-	if defaults.getboolean("UploadVideoFile"):
-		upload_image(video_path, defaults.get("UploadVideoFileName"))
+	server_addr = config.get("ComfyUI_ServerAddress")
+	upload_image(server_addr, image_path, "input.png")
+	if config.getboolean("UploadVideoFile"):
+		upload_image(server_addr, video_path, config.get("UploadVideoFileName"))
 
-	images = get_images(ws, workflow_json)
+	images = get_images(server_addr, ws, workflow_json)
 
 	for node_id in images:
 		for image_data in images[node_id]:

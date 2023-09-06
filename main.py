@@ -3,13 +3,40 @@ import shutil
 import processors
 import util
 import configparser
+import uuid
+
 import comfyui
 
+def fix_config(config):
+	if not os.path.exists(config):	
+		return
+	
+	file = open(config, "r")
+	lines = file.readlines()
+	for index in range(0, len(lines)):
+		line = lines[index]
+		if line.startswith("[RenderPass"):
+			line = line[1:-2]
+			arr = line.split(".")
+			if len(arr) < 3:
+				arr.append(0)
+			arr[2] = f"{uuid.uuid4()}]"
+			lines[index] = f"[{'.'.join(arr)}]"
+
+	file.close()
+	return lines	
+
 def main():
+	lines = fix_config("example.config.ini")
+	config_lines = fix_config("config.ini")
+	lines = lines + config_lines
+
 	config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-	config.read(["example.config.ini", "config.ini"])
+	config.read_string("".join(lines))
 
 	defaults = config["DEFAULT"]
+
+	comfyui.connect(defaults.get("ComfyUI_ServerAddress"))
 
 	if not "VideoDir" in defaults:
 		print(f"Error: Could not find VideoDir in config.")
@@ -58,8 +85,7 @@ def main():
 	print("DONE!")
 	return
 
-try:	
-	comfyui.connect()
+try:
 	main()
 finally:
 	comfyui.close()
