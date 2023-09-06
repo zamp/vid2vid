@@ -18,8 +18,7 @@ Put your video files in video directory. All files have to be named 000.png wher
 
 Files have to be sequential and cannot have gaps!
 
-Create a config.ini file 
-Rename example.config.ini to config.py and tweak it to your liking.
+Tweak the config.ini file to your liking.
 
 Either run "run.bat" or "python main.py" from command line.
 
