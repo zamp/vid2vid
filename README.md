@@ -29,9 +29,26 @@ To run the provided workflow_api.json you need to have Flat-2D Animerge model in
 
 ## How to do custom ComfyUI workflows
 
+### IMPORTANT
+
+Modify comfyui/web/scripts/app.js to the following
+
+```
+async graphToPrompt() {
+    ...
+    output[String(node.id)] = {
+        title: node.title,
+        inputs,
+        class_type: node.comfyClass,
+    };
+}
+```
+
+This adds the node title into the api.json. This tool will NOT work without it!
+
 Duplicate the ComfyUI/inputs/example.png twice and name these files "input.png" and "video.png"
 
-Open workflows/workflow.json in ComfyUI and modify it as you want.
+Open workflows/example.workflow.json in ComfyUI and modify it as you want.
 
 Set your image loader to load "input.png" (optionally you can also have a loader with "video.png" for ControlNets etc.)
 
@@ -39,24 +56,4 @@ Set your image loader to load "input.png" (optionally you can also have a loader
 
 Save it to the workflows directory.
 
-Change render_pass_default.py to point to it OR change the config.py render pass generators to also have workflow="your work flow path" as a parameter.
-
-The script will try to find the sampler and positive/negative input fields automatically. But in case it can't find them you can change them in comfyui.py
-
-To automatically find positive and negative prompt fields save them with "positive_prompt" and "negative_prompt" in the text field.
-
-Currently supported nodes for automatic search:
-Clip: ```CLIPTextEncode``` and  ```BNK_CLIPTextEncodeAdvanced```
-Sampler: ```KSampler``` and ```BNK_TiledKSampler```
-Image loader: ```LoadImage```
-Model loader: ```CheckpointLoaderSimple```
-
-If the search fails for some reason you can set these numbers to whatever they're in the workflow_api.json (open the json with notepad or similar) OR you can disable sending these values to ComfyUI in the config/render_pass_defaults.
-```
-sampler = "14"
-positive_input = "6"
-negative_input = "7"
-image_input = "10"
-```
-
-Try to avoid scaling output image in the workflow or ensure output is the exact same size as input.
+Change the config.ini Workflow = "your work flow path" (Without quotes)

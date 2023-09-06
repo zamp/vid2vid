@@ -1,0 +1,106 @@
+{
+  "4": {
+    "title": "loader",
+    "inputs": {
+      "ckpt_name": "hassakuHentaiModel_v12.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple"
+  },
+  "8": {
+    "title": "VAE Decode",
+    "inputs": {
+      "samples": [
+        "67",
+        0
+      ],
+      "vae": [
+        "4",
+        2
+      ]
+    },
+    "class_type": "VAEDecode"
+  },
+  "10": {
+    "title": "input_image",
+    "inputs": {
+      "image": "input.png",
+      "choose file to upload": "image"
+    },
+    "class_type": "LoadImage"
+  },
+  "12": {
+    "title": "VAE Encode",
+    "inputs": {
+      "pixels": [
+        "10",
+        0
+      ],
+      "vae": [
+        "4",
+        2
+      ]
+    },
+    "class_type": "VAEEncode"
+  },
+  "67": {
+    "title": "sampler",
+    "inputs": {
+      "seed": 965475482058836,
+      "steps": 30,
+      "cfg": 8,
+      "sampler_name": "euler_ancestral",
+      "scheduler": "karras",
+      "denoise": 0.39999999999999947,
+      "model": [
+        "4",
+        0
+      ],
+      "positive": [
+        "79",
+        0
+      ],
+      "negative": [
+        "80",
+        0
+      ],
+      "latent_image": [
+        "12",
+        0
+      ]
+    },
+    "class_type": "KSampler"
+  },
+  "79": {
+    "title": "positive_prompt",
+    "inputs": {
+      "text": "",
+      "clip": [
+        "4",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode"
+  },
+  "80": {
+    "title": "negative_prompt",
+    "inputs": {
+      "text": "",
+      "clip": [
+        "4",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode"
+  },
+  "81": {
+    "title": "save",
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "SaveImage"
+  }
+}

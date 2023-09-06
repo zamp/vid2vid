@@ -7,19 +7,29 @@ import shutil
 import subprocess
 import threading
 import ebsynth_window
+from configparser import SectionProxy
 
-def run_stable_diffusion(input_file_path:str, src_file_path:str, output_file_path:str, cfg:int, denoise:float, positive_prompt:str, negative_prompt:str, workflow_json:str, model:str):
-	image = comfyui.process_image(input_file_path, src_file_path, cfg, denoise, positive_prompt, negative_prompt, workflow_json, model)
+def run_stable_diffusion(input_file_path:str, src_file_path:str, output_file_path:str, config:SectionProxy):
+	image = comfyui.process_image(input_file_path, src_file_path, config)
+
 	# for some reason the images come out different size than put in?
 	img = Image.open(input_file_path)
 	if img.width != image.width or img.height != image.height:
+		print("Warning: comfyui output file resolution is not the same as input resolution. Resizing to match input file resolution.")
 		image = image.resize((img.width, img.height))
 	image.save(output_file_path)
 
-def process_comfyui(input_dir:str, video_dir:str, output_dir:str, cfg:int, denoise:float, positive_prompt:str, negative_prompt:str, workflow_json:str, model:str):
+def process_comfyui(config:SectionProxy):
+	input_dir = config.get("InputDir")
+	output_dir = config.get("OutputDir")
+	video_dir = config.get("VideoDir")
+
+	if not os.path.exists(output_dir):
+		os.makedirs(output_dir)
+
 	files = util.get_png_files(input_dir)
 	for file in files:
-		run_stable_diffusion(input_dir+file, video_dir+file, output_dir+file, cfg, denoise, positive_prompt, negative_prompt, workflow_json, model)
+		run_stable_diffusion(input_dir+file, video_dir+file, output_dir+file, config)
 
 def clamp(num, min_value, max_value):
    return max(min(num, max_value), min_value)	
@@ -66,7 +76,18 @@ def run_ebsynth(automatic, project, ebsynth_exe):
 	
 	os.remove(ebs_file)
 
-def process_ebsynth(automatic:bool, max_ebsynth_files:int, ebsynth_exe:str, ebsynth_dir:str, input_dir:str, output_dir:str, video_dir:str, alpha:float, frame_spread:int, spread_alpha_multiplier:float):
+def process_ebsynth(config:SectionProxy):
+	ebsynth_dir = config.get("EbsynthDir")
+	video_dir = config.get("VideoDir")
+	input_dir = config.get("InputDir")
+	output_dir = config.get("OutputDir")
+
+	alpha = config.getfloat("Alpha")
+	frame_spread = config.getint("FrameSpread")
+	ebsynth_exe = config.get("EbsynthExe")
+	max_ebsynth_files = config.getint("MaxEbsynthFiles")
+	automatic = config.getboolean("AutomateEbsynth")
+
 	if os.path.exists(ebsynth_dir):
 		shutil.rmtree(ebsynth_dir)
 	os.makedirs(ebsynth_dir)
@@ -126,7 +147,13 @@ def process_ebsynth(automatic:bool, max_ebsynth_files:int, ebsynth_exe:str, ebsy
 
 	util.copy_files_from_to(input_dir, output_dir, ".png")
 
-def process_alpha_blend(input_dir, blend_dir, output_dir, alpha):
+def process_alpha_blend(config:SectionProxy):
+	alpha = config.getfloat("Alpha")
+	input_dir = config.get("InputDir")
+	blend_dir = config.get("BlendDir")
+	output_dir = config.get("OutputDir")
+
+
 	files = util.get_png_files(input_dir)
 	for file in files:
 		src = Image.open(input_dir+file).convert("RGB")

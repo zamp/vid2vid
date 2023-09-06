@@ -6,7 +6,7 @@ import configparser
 import comfyui
 
 def main():
-	config = configparser.ConfigParser()	
+	config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
 	config.read(["example.config.ini", "config.ini"])
 
 	defaults = config["DEFAULT"]
@@ -17,56 +17,43 @@ def main():
 
 	frame_min,frame_max = util.get_min_max_frames(defaults.get("VideoDir"))
 
+	copy_temp = defaults.getboolean("CopyOutputToTempBetweenPasses")
+
 	print("Processing files from frame: " + str(frame_min).zfill(3) + " to: " + str(frame_max).zfill(3))
 
-	temp_dir = defaults.get("TempDir")
-
-	for cfg in config:
-		if not cfg.startswith("RenderPass"):
+	for config_name in config:
+		if not config_name.startswith("RenderPass"):
 			continue
 
-		render_pass = config[cfg]
+		arr = config_name.split(".")
+		type = arr[1]
 
-		type = render_pass.get("Type")
+		print(f"Executing render pass: {config_name} ({type})")
 
-		print(f"Executing render pass: {cfg} ({type})")
-		
-		input_dir = render_pass.get("InputDir")
-		output_dir = render_pass.get("OutputDir")
+		rp_config = config[config_name]
 
-		if not os.path.exists(output_dir):
-			os.makedirs(output_dir)
-		
-		util.copy_files_from_to(input_dir, temp_dir, ".png")
+		if type == "del_files":
+			dir = rp_config.get("Dir")
+			if os.path.exists(dir):
+				shutil.rmtree(dir)
+
+		if type == "copy_files":
+			fromdir = rp_config.get("From")
+			todir = rp_config.get("To")
+			util.copy_files_from_to(fromdir, todir, ".png")
 
 		if type == "comfyui":
-			cfg = render_pass.get("Cfg")
-			denoise = render_pass.get("Denoise")
-			pos_prompt = render_pass.get("PositivePrompt")
-			neg_prompt = render_pass.get("NegativePrompt")
-			workflow = render_pass.get("Workflow")
-			model = render_pass.get("Model")
-			video_dir = render_pass.get("VideoDir")
-			processors.process_comfyui(temp_dir, video_dir, output_dir, cfg, denoise, pos_prompt, neg_prompt, workflow, model)
+			processors.process_comfyui(rp_config)
 
 		elif type == "ebsynth_blend":
-			alpha = render_pass.getfloat("Alpha")
-			frame_spread = render_pass.getint("FrameSpread")
-			spread_alpha_multiplier = render_pass.getfloat("FrameSpreadAlphaMultiplier")
-			video_dir = render_pass.get("VideoDir")
-			ebsynth_dir = defaults.get("EbsynthDir")
-			ebsynth_exe = defaults.get("EbsynthExe")
-			max_files = defaults.getint("MaxEbsynthFiles")
-			automatic = defaults.getboolean("AutomateEbsynth")
-			processors.process_ebsynth(automatic, max_files, ebsynth_exe, ebsynth_dir, temp_dir, output_dir, video_dir, alpha, frame_spread, spread_alpha_multiplier)
+			processors.process_ebsynth(rp_config)
 
 		elif type == "alpha_blend":
-			alpha = render_pass.getfloat("Alpha")
-			blend_dir = render_pass.get("BlendDir")
-			output_dir = render_pass.get("OutputDir")
-			processors.process_alpha_blend(temp_dir, blend_dir, output_dir, alpha)
+			processors.process_alpha_blend(rp_config)
 
-	shutil.rmtree(temp_dir)
+		if copy_temp:
+			if os.path.exists(defaults.get("OutputDir")):
+				util.copy_files_from_to(defaults.get("OutputDir"), defaults.get("TempDir"), ".png")
 
 	print("DONE!")
 	return
