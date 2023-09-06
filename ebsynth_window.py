@@ -26,6 +26,7 @@ def wait_and_kill():
         time.sleep(0.5)
     
     hwnd = win32gui.FindWindow(None, "EbSynth Beta [generated.ebs]")
+
     rect = win32gui.GetWindowRect(hwnd)
 
     # bottom right corner of window
@@ -36,13 +37,12 @@ def wait_and_kill():
 
     #print(win_x,win_y,win_w,win_h)
 
-    pos = (win_x + win_w - 65, win_y + win_h - 42)
-
-    mouse = Controller()
+    pos = (win_x + win_w - 65, win_y + win_h - 42)    
     
     start_x = win_w - 35
     start_y = win_h - 70
 
+    mouse = Controller()
     old_position = mouse.position
 
     started = False
@@ -73,6 +73,17 @@ def wait_and_kill():
 
     done = False
     while (not done):
+        rect = win32gui.GetWindowRect(hwnd)
+
+        # bottom right corner of window
+        win_x = rect[0]
+        win_y = rect[1]
+        win_w = rect[2] - win_x
+        win_h = rect[3] - win_y
+        
+        start_x = win_w - 35
+        start_y = win_h - 70
+
         img = ImageGrab.grab((win_x, win_y, win_x + win_w, win_y + win_h))
         px = img.load()
 

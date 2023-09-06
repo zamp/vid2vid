@@ -23,8 +23,6 @@ Rename example.config.ini to config.py and tweak it to your liking.
 
 Either run "run.bat" or "python main.py" from command line.
 
-Whenever ebsynth pops up press Run All and once done close it.
-
 To run the provided workflow_api.json you need to have Flat-2D Animerge model installed. You can get it from https://civitai.com/models/35960/flat-2d-animerge. You can also just change the json to point to some other model or create your own workflow which is explained below.
 
 ## How to do custom ComfyUI workflows
