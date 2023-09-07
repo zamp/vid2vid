@@ -43,7 +43,7 @@ async graphToPrompt() {
 
 This adds the node title into the api.json. **This tool will NOT work without it!**
 
-Duplicate the ComfyUI/inputs/example.png twice and name these files "input.png" and "video.png". __This just makes them show up in the default image loader. If you're using another loader you can probably skip this step and just type in the file names.__
+Duplicate the ComfyUI/inputs/example.png twice and name these files "input.png" and "video.png". *This just makes them show up in the default image loader. If you're using another loader you can probably skip this step and just type in the file names.*
 
 Open workflows/example.workflow.json in ComfyUI and modify it as you want.
 
