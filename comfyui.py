@@ -68,7 +68,7 @@ def close():
 	ws.close()
 
 def parse_key(json, key):
-	arr = key.split("_")
+	arr = key.split(".")
 	title = str(arr[1]).lower()
 	input = str(arr[2]).lower()
 	for key in json:
@@ -92,7 +92,7 @@ def process_image(image_path:str, video_path, config:SectionProxy):
 
 	# parse comfyui parameters	
 	for key in config.keys():
-		if key.startswith("comfyuiparam_"):
+		if key.startswith("comfyuiparam."):
 			(title, input) = parse_key(workflow_json, key)
 			if title == None or input == None:
 				continue

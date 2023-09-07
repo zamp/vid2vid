@@ -2,7 +2,7 @@
   "4": {
     "title": "loader",
     "inputs": {
-      "ckpt_name": "hassakuHentaiModel_v12.safetensors"
+      "ckpt_name": "flat2DAnimerge_v30.safetensors"
     },
     "class_type": "CheckpointLoaderSimple"
   },

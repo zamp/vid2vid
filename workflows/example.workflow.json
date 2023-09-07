@@ -190,7 +190,7 @@
         "Node name for S&R": "CheckpointLoaderSimple"
       },
       "widgets_values": [
-        "hassakuHentaiModel_v12.safetensors"
+        "flat2DAnimerge_v30.safetensors"
       ]
     },
     {
