@@ -52,6 +52,7 @@ Set your image loader to load "input.png" (you can also have a loader with "vide
 ### Pro tip
 
 Install WAS node suite (https://github.com/WASasquatch/was-node-suite-comfyui) and use the save image node from that with these settings (This way it will always overwrite the same file and you don't end up with gigabytes of half baked frames):
+![image](https://github.com/zamp/comfy-temporal-stability/assets/1029645/6aca4944-6317-4061-87b6-75d0c6729256)
 
 **Enable developer options in ComfyUI (gear icon, toggle "Enable Dev mode Options") and then save workflow api.**
 
