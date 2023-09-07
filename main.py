@@ -34,6 +34,11 @@ def main():
 
 	defaults = config["DEFAULT"]
 
+	if defaults.getboolean("UseExampleRenderPasses"):
+		config.read_string(fix_config("example.renderpasses.ini"))
+		
+	config.read_string(fix_config("renderpasses.ini"))
+
 	comfyui.connect(defaults.get("ComfyUI_ServerAddress"))
 
 	if not "VideoDir" in defaults:
