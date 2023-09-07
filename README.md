@@ -14,12 +14,11 @@ Install EbSynth somewhere. Get it from https://ebsynth.com/
 
 Start ComfyUI.
 
-Put your video files in video directory. All files have to be named 000.png where 000 is the frame number. 001.png, 002.png, 003.png etc.
+Put your video files in video directory. All files have to be named XXX.png where XXX is the frame number. 001.png, 002.png, 003.png etc. Can start from any number and end with any number. Should support other formats like XXXX.png or XX.png, haven't tested that though.
 
 Files have to be sequential and cannot have gaps!
 
-Create a config.ini file 
-Rename example.config.ini to config.py and tweak it to your liking.
+**Read through configs/example.config.ini**
 
 Either run "run.bat" or "python main.py" from command line.
 
@@ -42,16 +41,24 @@ async graphToPrompt() {
 }
 ```
 
-This adds the node title into the api.json. This tool will NOT work without it!
+This adds the node title into the api.json. **This tool will NOT work without it!**
 
-Duplicate the ComfyUI/inputs/example.png twice and name these files "input.png" and "video.png"
+Duplicate the ComfyUI/inputs/example.png twice and name these files "input.png" and "video.png". __This just makes them show up in the default image loader. If you're using another loader you can probably skip this step and just type in the file names.__
 
 Open workflows/example.workflow.json in ComfyUI and modify it as you want.
 
-Set your image loader to load "input.png" (optionally you can also have a loader with "video.png" for ControlNets etc.)
+Set your image loader to load "input.png" (you can also have a loader with "video.png" for ControlNets etc. and load both the input and video files separately for separate or combined processes.)
+
+### Pro tip
+
+Install WAS node suite (https://github.com/WASasquatch/was-node-suite-comfyui) and use the save image node from that with these settings (This way it will always overwrite the same file and you don't end up with gigabytes of half baked frames):
 
 **Enable developer options in ComfyUI (gear icon, toggle "Enable Dev mode Options") and then save workflow api.**
 
 Save it to the workflows directory.
 
-Change the config.ini Workflow = "your work flow path" (Without quotes)
+Change the config.ini to point to your new workflow.
+
+## Known issues
+
+Preview nodes mess up getting correct file for processing. Workaround: don't have preview nodes or make sure save image is last node in json. (Duplicate save node and delete previous. Hook it back in.)
