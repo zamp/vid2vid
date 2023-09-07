@@ -54,9 +54,10 @@ def main():
 			continue
 
 		arr = config_name.split(".")
+		name = arr[0]
 		type = arr[1]
 
-		print(f"Executing render pass: {config_name} ({type})")
+		print(f"Executing pass: {name} ({type})")
 
 		rp_config = config[config_name]
 

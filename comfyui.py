@@ -84,9 +84,11 @@ def get_api_id(json, title):
 			return key
 	return -1
 
-def process_image(image_path:str, video_path, config:SectionProxy):
+def process_image(image_path:str, video_path:str, config:SectionProxy):
 	# get config values	
 	workflow = config.get("Workflow")
+
+	#print(image_path, video_path)
 
 	workflow_json = json.load(open(workflow))
 
@@ -98,13 +100,15 @@ def process_image(image_path:str, video_path, config:SectionProxy):
 				continue
 
 			api_id = get_api_id(workflow_json, title)
+			if api_id == -1:
+				continue
 			value = config.get(key)			
 
 			# parse correct type into json
 			if value.isdigit():
 				# handle seed randomization
 				if str(input).lower() == "seed" and value == -1:
-					value = random.randint(1,18446744073709551616)									
+					value = random.randint(1,18446744073709551616)
 				workflow_json[api_id]["inputs"][input] = int(value)
 			elif value.replace('.','',1).isdigit() and value.count('.') < 2:
 				workflow_json[api_id]["inputs"][input] = float(value)
@@ -115,6 +119,8 @@ def process_image(image_path:str, video_path, config:SectionProxy):
 	upload_image(server_addr, image_path, "input.png")
 	if config.getboolean("UploadVideoFile"):
 		upload_image(server_addr, video_path, config.get("UploadVideoFileName"))
+
+	#print(workflow_json)
 
 	images = get_images(server_addr, ws, workflow_json)
 

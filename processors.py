@@ -68,7 +68,6 @@ def run_ebsynth(automatic, project, ebsynth_exe):
 	ebs_file = "generated.ebs"
 	project.WriteToFile(ebs_file)
 
-	# TODO: make this script press Run-All button and wait for processing to complete
 	process = subprocess.Popen(['cmd','/c',f"{ebsynth_exe} {os.path.abspath(ebs_file)}"])	
 	thread = threading.Thread(target=wait_for_ebsynth_to_complete, args=[automatic, process])
 	thread.start()
@@ -113,7 +112,10 @@ def process_ebsynth(config:SectionProxy):
 
 		ebsynth_output_dir = f"{ebsynth_dir}{str(frame).zfill(file_name_length)}/[{filenumber_hashes}]{ext}"
 		
-		minframe = frame - frame_spread
+		if config.getboolean("ForwardOnly", fallback=False):
+			minframe = frame
+		else:
+			minframe = frame - frame_spread
 		maxframe = frame + frame_spread
 
 		use_min_frame = True
@@ -140,7 +142,8 @@ def process_ebsynth(config:SectionProxy):
 	for file in input_files:
 		frame = int(file[:-4])
 		for offset in range(1, frame_spread+1):
-			blend_img(ebsynth_dir, input_dir, frame, frame - offset, file_name_length, ext, alpha)
+			if not config.getboolean("ForwardOnly", fallback=False):
+				blend_img(ebsynth_dir, input_dir, frame, frame - offset, file_name_length, ext, alpha)
 			blend_img(ebsynth_dir, input_dir, frame, frame + offset, file_name_length, ext, alpha)
 	
 	shutil.rmtree(ebsynth_dir)
