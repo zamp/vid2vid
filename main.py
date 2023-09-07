@@ -29,15 +29,13 @@ def fix_config(config):
 def main():
 	config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
 
-	config.read_string(fix_config("example.config.ini"))
-	config.read_string(fix_config("config.ini"))
+	config.read_string(fix_config("config/example.config.ini"))
+	config.read_string(fix_config("config/config.ini"))
 
 	defaults = config["DEFAULT"]
 
 	if defaults.getboolean("UseExampleRenderPasses"):
-		config.read_string(fix_config("example.renderpasses.ini"))
-		
-	config.read_string(fix_config("renderpasses.ini"))
+		config.read_string(fix_config("config/example.renderpasses.ini"))
 
 	comfyui.connect(defaults.get("ComfyUI_ServerAddress"))
 
