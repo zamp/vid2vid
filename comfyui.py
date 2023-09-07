@@ -105,11 +105,11 @@ def process_image(image_path:str, video_path, config:SectionProxy):
 				# handle seed randomization
 				if str(input).lower() == "seed" and value == -1:
 					value = random.randint(1,18446744073709551616)									
-				workflow_json[api_id][input] = int(value)
+				workflow_json[api_id]["inputs"][input] = int(value)
 			elif value.replace('.','',1).isdigit() and value.count('.') < 2:
-				workflow_json[api_id][input] = float(value)
+				workflow_json[api_id]["inputs"][input] = float(value)
 			else:
-				workflow_json[api_id][input] = value
+				workflow_json[api_id]["inputs"][input] = value
 
 	server_addr = config.get("ComfyUI_ServerAddress")
 	upload_image(server_addr, image_path, "input.png")
