@@ -29,15 +29,13 @@ def process_comfyui(config:SectionProxy):
 		os.makedirs(output_dir)
 
 	limit_frames = config.getint("SkipFrames", fallback=0) + 1
-	files = util.get_png_files(input_dir)
+	files = util.get_png_files(video_dir)
 	start_frame = int(files[0][:-4])
 	for file in files:
 		frame = int(file[:-4])
 
 		# skip frames that are outside of limit
 		if (frame - start_frame) % limit_frames != 0:
-			# straight copy input to output if we're not running comfyui on this frame
-			shutil.copy(input_dir+file, output_dir+file)
 			continue
 
 		run_stable_diffusion(input_dir+file, video_dir+file, output_dir+file, config)
@@ -109,7 +107,7 @@ def process_ebsynth(config:SectionProxy):
 		shutil.rmtree(ebsynth_dir)
 	os.makedirs(ebsynth_dir)
 
-	input_files = util.get_png_files(input_dir)
+	input_files = util.get_png_files(video_dir)
 	input_file = input_files[0]
 	file_name_length = len(input_file[:-4])
 	ext = input_file[-4:]
@@ -125,7 +123,7 @@ def process_ebsynth(config:SectionProxy):
 	project = EBSynthProject(video_path, keys_path, "", False)
 	project.keyFrames = []
 
-	limit_frames = config.getint("SkipFrames", fallback=1)
+	limit_frames = config.getint("SkipFrames", fallback=1)+1
 	frame_spread = max(limit_frames, frame_spread)
 
 	start_frame = int(input_files[0][:-4])
@@ -135,6 +133,10 @@ def process_ebsynth(config:SectionProxy):
 
 		# skip frames that are outside of limit
 		if (frame - start_frame) % limit_frames != 0:
+			continue
+
+		if not os.path.exists(input_dir+file):
+			print(f"Error: Could not find file {file} for ebsynth. Make sure SkipFrames is the same as previous comfyui pass.")
 			continue
 
 		ebsynth_output_dir = f"{ebsynth_dir}{str(frame).zfill(file_name_length)}/[{filenumber_hashes}]{ext}"
@@ -190,9 +192,12 @@ def process_ebsynth(config:SectionProxy):
 		input_path = f"{input_dir}{file}"
 		output_path = f"{output_dir}{file}"
 
-		output_img = Image.open(input_path).convert("RGB")
-		output_img = Image.blend(output_img, avg, alpha)
-		output_img.save(output_path)
+		if os.path.exists(input_path):
+			output_img = Image.open(input_path).convert("RGB")
+			output_img = Image.blend(output_img, avg, alpha)
+			output_img.save(output_path)
+		else:
+			avg.save(output_path)
 	
 	shutil.rmtree(ebsynth_dir)
 
