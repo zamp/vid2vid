@@ -28,7 +28,7 @@ To run the provided workflow_api.json you need to have Flat-2D Animerge model in
 
 ### IMPORTANT
 
-Modify comfyui/web/scripts/app.js to the following
+Modify end of graphToPrompt() in comfyui/web/scripts/app.js to the following (You can find this around line 1450.)
 
 ```
 async graphToPrompt() {
