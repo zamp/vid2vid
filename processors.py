@@ -184,17 +184,17 @@ def process_ebsynth(config:SectionProxy):
 			if f == file:
 				blendable_files.append(blend_file)
 		
+		#print(file, blendable_files)
 		avg = average_img(blendable_files)
 
-		output_img_path = f"{input_dir}{file}"
+		input_path = f"{input_dir}{file}"
+		output_path = f"{output_dir}{file}"
 
-		output_img = Image.open(output_img_path).convert("RGB")
+		output_img = Image.open(input_path).convert("RGB")
 		output_img = Image.blend(output_img, avg, alpha)
-		output_img.save(output_img_path)
+		output_img.save(output_path)
 	
 	shutil.rmtree(ebsynth_dir)
-
-	util.copy_files_from_to(input_dir, output_dir, ".png")
 
 def process_alpha_blend(config:SectionProxy):
 	alpha = config.getfloat("Alpha")
