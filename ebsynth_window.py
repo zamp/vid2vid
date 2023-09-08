@@ -81,7 +81,7 @@ def wait_and_kill():
         win_w = rect[2] - win_x
         win_h = rect[3] - win_y
         
-        start_x = win_w - 35
+        start_x = win_w - 30
         start_y = win_h - 70
 
         img = ImageGrab.grab((win_x, win_y, win_x + win_w, win_y + win_h))
