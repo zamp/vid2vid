@@ -115,7 +115,7 @@ def process_ebsynth(config:SectionProxy):
 	for i in range(file_name_length):
 		filenumber_hashes += "#"
 
-	min_frame, max_frame = util.get_min_max_frames(input_dir)
+	min_frame, max_frame = util.get_min_max_frames(video_dir)
 
 	keys_path = f"{input_dir}[{filenumber_hashes}]{ext}"
 	video_path = f"{video_dir}[{filenumber_hashes}]{ext}"
