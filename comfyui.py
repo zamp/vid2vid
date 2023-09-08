@@ -102,7 +102,7 @@ def process_image(image_path:str, video_path:str, config:SectionProxy):
 			api_id = get_api_id(workflow_json, title)
 			if api_id == -1:
 				continue
-			value = config.get(key)			
+			value = config.get(key)
 
 			# parse correct type into json
 			if value.isdigit():

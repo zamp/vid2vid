@@ -86,6 +86,14 @@ def blend_img(ebsynth_dir, input_dir, frame, offset_frame, file_name_length, ext
 	output_img = Image.blend(output_img, warped_img, a)
 	output_img.save(f"{input_dir}{str(frame).zfill(file_name_length)}{ext}")
 
+def average_img(imlist):
+    N = len(imlist)
+    avg=Image.open(imlist[0]).convert("RGB")
+    for i in range(1,N):
+        img=Image.open(imlist[i]).convert("RGB")
+        avg=Image.blend(avg,img,1.0/float(i+1))
+    return avg
+
 def process_ebsynth(config:SectionProxy):
 	ebsynth_dir = config.get("EbsynthDir")
 	video_dir = config.get("VideoDir")
@@ -117,7 +125,7 @@ def process_ebsynth(config:SectionProxy):
 	project = EBSynthProject(video_path, keys_path, "", False)
 	project.keyFrames = []
 
-	limit_frames = config.getint("SkipFrames", fallback=0) + 1
+	limit_frames = config.getint("SkipFrames", fallback=1)
 	frame_spread = max(limit_frames, frame_spread)
 
 	start_frame = int(input_files[0][:-4])
@@ -166,6 +174,8 @@ def process_ebsynth(config:SectionProxy):
 	for dir,_,_ in os.walk(start_dir):
 		files.extend(glob(os.path.join(dir,pattern))) 
 
+	alpha = config.getfloat("Alpha", fallback=1)
+
 	for file in input_files:
 		blendable_files = []
 
@@ -174,17 +184,13 @@ def process_ebsynth(config:SectionProxy):
 			if f == file:
 				blendable_files.append(blend_file)
 		
-		count = len(blendable_files)
-		for blend_file in blendable_files:
-			output_img_path = f"{input_dir}{file}"
+		avg = average_img(blendable_files)
 
-			blend_img = Image.open(blend_file).convert("RGB")
-			output_img = Image.open(output_img_path).convert("RGB")
+		output_img_path = f"{input_dir}{file}"
 
-			a = 1 / count
-
-			output_img = Image.blend(output_img, blend_img, a)
-			output_img.save(output_img_path)
+		output_img = Image.open(output_img_path).convert("RGB")
+		output_img = Image.blend(output_img, avg, alpha)
+		output_img.save(output_img_path)
 	
 	shutil.rmtree(ebsynth_dir)
 
