@@ -165,7 +165,8 @@ def process_ebsynth(config:SectionProxy):
 			run_ebsynth(automatic, project, ebsynth_exe)
 			project.keyFrames = []
 
-	run_ebsynth(automatic, project, ebsynth_exe)
+	if len(project.keyFrames) > 0:
+		run_ebsynth(automatic, project, ebsynth_exe)
 
 	# blend ebsynth files now that they are generated
 

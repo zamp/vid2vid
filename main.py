@@ -84,6 +84,9 @@ def main():
 			if os.path.exists(defaults.get("OutputDir")):
 				util.copy_files_from_to(defaults.get("OutputDir"), defaults.get("TempDir"), ".png")
 
+		if rp_config.getboolean("WaitForUserInput", fallback=False):
+			input("Press enter to continue...")
+
 	print("DONE!")
 	return
 
