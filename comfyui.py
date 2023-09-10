@@ -105,9 +105,9 @@ def process_image(image_path:str, video_path:str, config:SectionProxy):
 			value = config.get(key)
 
 			# parse correct type into json
-			if value.isdigit():
+			if value.lstrip("-").isdigit():
 				# handle seed randomization
-				if str(input).lower() == "seed" and value == -1:
+				if str(input).lower() == "seed" and int(value) == -1:
 					value = random.randint(1,18446744073709551616)
 				workflow_json[api_id]["inputs"][input] = int(value)
 			elif value.replace('.','',1).isdigit() and value.count('.') < 2:

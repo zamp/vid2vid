@@ -128,42 +128,48 @@ def process_ebsynth(config:SectionProxy):
 
 	start_frame = int(input_files[0][:-4])
 
-	for file in input_files:
-		frame = int(file[:-4])
+	if config.getboolean("PingPong", fallback=False):
+		ebsynth_output_dir = f"{ebsynth_dir}{str(min_frame).zfill(file_name_length)}/[{filenumber_hashes}]{ext}"
+		project.AddKeyFrame(False, True, min_frame, min_frame, max_frame, ebsynth_output_dir)
+		ebsynth_output_dir = f"{ebsynth_dir}{str(max_frame).zfill(file_name_length)}/[{filenumber_hashes}]{ext}"
+		project.AddKeyFrame(True, False, min_frame, max_frame, max_frame, ebsynth_output_dir)
+	else:
+		for file in input_files:
+			frame = int(file[:-4])
 
-		# skip frames that are outside of limit
-		if (frame - start_frame) % limit_frames != 0:
-			continue
+			ebsynth_output_dir = f"{ebsynth_dir}{str(frame).zfill(file_name_length)}/[{filenumber_hashes}]{ext}"
 
-		if not os.path.exists(input_dir+file):
-			print(f"Error: Could not find file {file} for ebsynth. Make sure SkipFrames is the same as previous comfyui pass.")
-			continue
+			# skip frames that are outside of limit
+			if (frame - start_frame) % limit_frames != 0:
+				continue
 
-		ebsynth_output_dir = f"{ebsynth_dir}{str(frame).zfill(file_name_length)}/[{filenumber_hashes}]{ext}"
-		
-		if config.getboolean("ForwardOnly", fallback=False):
-			minframe = frame
-		else:
-			minframe = frame - frame_spread
-		maxframe = frame + frame_spread
+			if not os.path.exists(input_dir+file):
+				print(f"Error: Could not find file {file} for ebsynth. Make sure SkipFrames is the same as previous comfyui pass.")
+				continue
+			
+			if config.getboolean("ForwardOnly", fallback=False):
+				minframe = frame
+			else:
+				minframe = frame - frame_spread
+			maxframe = frame + frame_spread
 
-		use_min_frame = True
-		use_max_frame = True
+			use_min_frame = True
+			use_max_frame = True
 
-		if minframe < min_frame:
-			minframe = min_frame
-			if minframe == frame:
-				use_min_frame = False
-		if maxframe > max_frame:
-			maxframe = max_frame
-			if maxframe == frame:
-				use_max_frame = False
+			if minframe < min_frame:
+				minframe = min_frame
+				if minframe == frame:
+					use_min_frame = False
+			if maxframe > max_frame:
+				maxframe = max_frame
+				if maxframe == frame:
+					use_max_frame = False
 
-		project.AddKeyFrame(use_min_frame, use_max_frame, minframe, frame, maxframe, ebsynth_output_dir)
+			project.AddKeyFrame(use_min_frame, use_max_frame, minframe, frame, maxframe, ebsynth_output_dir)
 
-		if len(project.keyFrames) >= max_ebsynth_files:
-			run_ebsynth(automatic, project, ebsynth_exe)
-			project.keyFrames = []
+			if len(project.keyFrames) >= max_ebsynth_files:
+				run_ebsynth(automatic, project, ebsynth_exe)
+				project.keyFrames = []
 
 	if len(project.keyFrames) > 0:
 		run_ebsynth(automatic, project, ebsynth_exe)
