@@ -5,8 +5,6 @@ import util
 import configparser
 import uuid
 
-import comfyui
-
 def fix_config(config):
 	if not os.path.exists(config):	
 		return
@@ -22,6 +20,9 @@ def fix_config(config):
 				arr.append(0)
 			arr[2] = f"{uuid.uuid4()}"
 			lines[index] = f"[{'.'.join(arr)}]\r\n"
+		if line.startswith("[ExtraPrompt"):
+			line = line[1:-2]
+			lines[index] = f"[{line}.{uuid.uuid4()}]\r\n"
 
 	file.close()
 	return "".join(lines)
@@ -37,8 +38,6 @@ def main():
 	if defaults.getboolean("UseExampleRenderPasses"):
 		config.read_string(fix_config("config/example.renderpasses.ini"))
 
-	comfyui.connect(defaults.get("ComfyUI_ServerAddress"))
-
 	if not "VideoDir" in defaults:
 		print(f"Error: Could not find VideoDir in config.")
 		return
@@ -46,6 +45,11 @@ def main():
 	frame_min,frame_max = util.get_min_max_frames(defaults.get("VideoDir"))
 
 	copy_temp = defaults.getboolean("CopyOutputToTempBetweenPasses")
+
+	if defaults.getboolean("DetectEmotions", fallback=False):
+		print("Processing emotions...")
+		import analyze_face
+		emotion_tokens = analyze_face.analyze_face_tokens_from_files(defaults.get("VideoDir"))
 
 	print("Processing files from frame: " + str(frame_min).zfill(3) + " to: " + str(frame_max).zfill(3))
 
@@ -72,7 +76,7 @@ def main():
 			util.copy_files_from_to(fromdir, todir, ".png")
 
 		if type == "comfyui":
-			processors.process_comfyui(rp_config)
+			processors.process_comfyui(rp_config, config, emotion_tokens)
 
 		elif type == "ebsynth_blend":
 			processors.process_ebsynth(rp_config)
@@ -90,7 +94,4 @@ def main():
 	print("DONE!")
 	return
 
-try:
-	main()
-finally:
-	comfyui.close()
+main()

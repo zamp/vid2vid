@@ -65,7 +65,8 @@ def connect(server_addr):
 	ws.connect(f"ws://{server_addr}/ws?clientId={client_id}")
 
 def close():
-	ws.close()
+	if ws.connected:
+		ws.close()
 
 def parse_key(json, key):
 	arr = key.split(".")
@@ -84,11 +85,9 @@ def get_api_id(json, title):
 			return key
 	return -1
 
-def process_image(image_path:str, video_path:str, config:SectionProxy):
+def process_image(image_path:str, video_path:str, config:SectionProxy, extra:SectionProxy, emotion_tokens:str):
 	# get config values	
 	workflow = config.get("Workflow")
-
-	#print(image_path, video_path)
 
 	workflow_json = json.load(open(workflow))
 
@@ -104,6 +103,10 @@ def process_image(image_path:str, video_path:str, config:SectionProxy):
 				continue
 			value = config.get(key)
 
+			# add emotions to prompt
+			if key == config.get("EmotionParam"):
+				value = f"{value}, {emotion_tokens}"
+
 			# parse correct type into json
 			if value.lstrip("-").isdigit():
 				# handle seed randomization
@@ -114,6 +117,29 @@ def process_image(image_path:str, video_path:str, config:SectionProxy):
 				workflow_json[api_id]["inputs"][input] = float(value)
 			else:
 				workflow_json[api_id]["inputs"][input] = value
+
+	# parse extra comfyui parameters
+	if extra != None:
+		for key in extra.keys():
+			if key.startswith("extra_comfyuiparam."):
+				(title, input) = parse_key(workflow_json, key)
+				if title == None or input == None:
+					continue
+
+				api_id = get_api_id(workflow_json, title)
+				if api_id == -1:
+					continue
+				value = extra.get(key)
+				if value == None:
+					continue
+
+				# additively parse correct type into json
+				if value.lstrip("-").isdigit():
+					workflow_json[api_id]["inputs"][input] += int(value)
+				elif value.replace('.','',1).isdigit() and value.count('.') < 2:
+					workflow_json[api_id]["inputs"][input] += float(value)
+				else:
+					workflow_json[api_id]["inputs"][input] += value
 
 	server_addr = config.get("ComfyUI_ServerAddress")
 	upload_image(server_addr, image_path, "input.png")

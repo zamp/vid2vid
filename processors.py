@@ -8,19 +8,44 @@ import subprocess
 import threading
 import ebsynth_window
 from configparser import SectionProxy
+from configparser import ConfigParser
 from glob import glob
 
-def run_stable_diffusion(input_file_path:str, src_file_path:str, output_file_path:str, config:SectionProxy):
-	image = comfyui.process_image(input_file_path, src_file_path, config)
+def run_stable_diffusion(input_file_path:str, src_file_path:str, output_file_path:str, config:SectionProxy, extra_config:SectionProxy, emotion_tokens:str):
+	try:
+		comfyui.connect(config.get("ComfyUI_ServerAddress"))
+		image = comfyui.process_image(input_file_path, src_file_path, config, extra_config, emotion_tokens)
 
-	# for some reason the images come out different size than put in?
-	img = Image.open(input_file_path)
-	if img.width != image.width or img.height != image.height:
-		print("Warning: comfyui output file resolution is not the same as input resolution. Resizing to match input file resolution.")
-		image = image.resize((img.width, img.height))
-	image.save(output_file_path)
+		# for some reason the images come out different size than put in?
+		img = Image.open(input_file_path)
+		if img.width != image.width or img.height != image.height:
+			print("Warning: comfyui output file resolution is not the same as input resolution. Resizing to match input file resolution.")
+			image = image.resize((img.width, img.height))
+		image.save(output_file_path)
+	finally:
+		comfyui.close()
 
-def process_comfyui(config:SectionProxy):
+def get_extra_prompts(frame:int, extra_prompts:dict):
+	ep = extra_prompts.get(frame)
+	if ep != None:
+		return (ep.positive, ep.negative)
+	return (None, None)
+
+def get_extra_config(frame:int, config:ConfigParser):
+	for config_name in config:
+		if not config_name.startswith("ExtraPrompt"):
+			continue
+		ep_config = config[config_name]
+		if ep_config.getint("Frame") == frame:
+			return ep_config
+	return None
+
+def get_tokens_for_frame(frame:int, emotion_tokens:dict):
+	if frame in emotion_tokens:
+		return emotion_tokens[frame]
+	return None
+
+def process_comfyui(config:SectionProxy, full_config:ConfigParser, emotion_tokens:dict):
 	input_dir = config.get("InputDir")
 	output_dir = config.get("OutputDir")
 	video_dir = config.get("VideoDir")
@@ -28,17 +53,30 @@ def process_comfyui(config:SectionProxy):
 	if not os.path.exists(output_dir):
 		os.makedirs(output_dir)
 
-	limit_frames = config.getint("SkipFrames", fallback=0) + 1
-	files = util.get_png_files(video_dir)
-	start_frame = int(files[0][:-4])
-	for file in files:
-		frame = int(file[:-4])
+	if config.getboolean("PingPong", fallback=False):
+		files = util.get_png_files(video_dir)
 
-		# skip frames that are outside of limit
-		if (frame - start_frame) % limit_frames != 0:
-			continue
+		first = files[0]
+		extra_config = get_extra_config(util.get_frame_int(first), full_config)
+		
+		run_stable_diffusion(input_dir+first, video_dir+first, output_dir+first, config, extra_config, get_tokens_for_frame(util.get_frame_int(first), emotion_tokens))
 
-		run_stable_diffusion(input_dir+file, video_dir+file, output_dir+file, config)
+		last = files[len(files)-1]
+		extra_config = get_extra_config(util.get_frame_int(last), full_config)
+		run_stable_diffusion(input_dir+last, video_dir+last, output_dir+last, config, extra_config, get_tokens_for_frame(util.get_frame_int(last), emotion_tokens))
+	else:
+		limit_frames = config.getint("SkipFrames", fallback=0) + 1
+		files = util.get_png_files(video_dir)
+		start_frame = config.getint("StartFrame", fallback=int(files[0][:-4]))
+		for file in files:
+			frame = util.get_frame_int(file)
+
+			# skip frames that are outside of limit
+			if (frame - start_frame) % limit_frames != 0:
+				continue
+
+			extra_config = get_extra_config(frame, full_config)
+			run_stable_diffusion(input_dir+file, video_dir+file, output_dir+file, config, extra_config, get_tokens_for_frame(frame, emotion_tokens))
 
 def clamp(num, min_value, max_value):
    return max(min(num, max_value), min_value)	
@@ -126,7 +164,7 @@ def process_ebsynth(config:SectionProxy):
 	limit_frames = config.getint("SkipFrames", fallback=1)+1
 	frame_spread = max(limit_frames, frame_spread)
 
-	start_frame = int(input_files[0][:-4])
+	start_frame = config.getint("StartFrame", fallback=int(input_files[0][:-4]))
 
 	if config.getboolean("PingPong", fallback=False):
 		ebsynth_output_dir = f"{ebsynth_dir}{str(min_frame).zfill(file_name_length)}/[{filenumber_hashes}]{ext}"
@@ -135,7 +173,7 @@ def process_ebsynth(config:SectionProxy):
 		project.AddKeyFrame(True, False, min_frame, max_frame, max_frame, ebsynth_output_dir)
 	else:
 		for file in input_files:
-			frame = int(file[:-4])
+			frame = util.get_frame_int(file)
 
 			ebsynth_output_dir = f"{ebsynth_dir}{str(frame).zfill(file_name_length)}/[{filenumber_hashes}]{ext}"
 
