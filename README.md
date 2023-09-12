@@ -2,7 +2,7 @@
 
 This is a python script that uses ebsynth to stabilize video made with stable diffusion (comfyui).
 
-![output](https://github.com/zamp/vid2vid/assets/1029645/da5782fc-63f3-4c45-aca8-a8002723f62b)
+![output](https://github.com/zamp/vid2vid/assets/1029645/b52f2eef-805d-41bc-b3af-3b96d8ec08f2)
 
 ## Install
 
