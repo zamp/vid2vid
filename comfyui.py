@@ -85,14 +85,9 @@ def get_api_id(json, title):
 			return key
 	return -1
 
-def process_image(image_path:str, video_path:str, config:SectionProxy, extra:SectionProxy):
+def process_image(image_path:str, video_path:str, config:SectionProxy, extra:SectionProxy, emotion_tokens:str):
 	# get config values	
 	workflow = config.get("Workflow")
-
-	#print(image_path, video_path)
-	if config.getboolean("DetectEmotions", fallback=False):
-		import analyze_face
-		emotions = analyze_face.analyze_face_tokens(video_path)
 
 	workflow_json = json.load(open(workflow))
 
@@ -110,7 +105,7 @@ def process_image(image_path:str, video_path:str, config:SectionProxy, extra:Sec
 
 			# add emotions to prompt
 			if key == config.get("EmotionParam"):
-				value = f"{value}, {emotions}"
+				value = f"{value}, {emotion_tokens}"
 
 			# parse correct type into json
 			if value.lstrip("-").isdigit():

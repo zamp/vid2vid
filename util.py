@@ -30,3 +30,6 @@ def get_min_max_frames(file_dir:str):
 		frame_min = min(int(file[:3]), frame_min)
 
 	return frame_min, frame_max
+
+def get_frame_int(frame):
+	return int(frame[:-4])	

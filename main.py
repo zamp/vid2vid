@@ -4,7 +4,6 @@ import processors
 import util
 import configparser
 import uuid
-
 import comfyui
 
 def fix_config(config):
@@ -48,6 +47,11 @@ def main():
 
 	copy_temp = defaults.getboolean("CopyOutputToTempBetweenPasses")
 
+	if defaults.getboolean("DetectEmotions", fallback=False):
+		print("Processing emotions...")
+		import analyze_face
+		emotion_tokens = analyze_face.analyze_face_tokens_from_files(defaults.get("VideoDir"))
+
 	print("Processing files from frame: " + str(frame_min).zfill(3) + " to: " + str(frame_max).zfill(3))
 
 	for config_name in config:
@@ -73,7 +77,7 @@ def main():
 			util.copy_files_from_to(fromdir, todir, ".png")
 
 		if type == "comfyui":
-			processors.process_comfyui(rp_config, config)
+			processors.process_comfyui(rp_config, config, emotion_tokens)
 
 		elif type == "ebsynth_blend":
 			processors.process_ebsynth(rp_config)
