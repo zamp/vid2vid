@@ -4,7 +4,6 @@ import processors
 import util
 import configparser
 import uuid
-import comfyui
 
 def fix_config(config):
 	if not os.path.exists(config):	

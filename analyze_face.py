@@ -11,13 +11,13 @@ def analyze_face_tokens(image):
 	if len(face_analysis) > 0:
 		emotion = face_analysis[0]["emotion"]
 
-		s = f"(angry, furious:{emotion['angry']/100.0:.1f}), "
-		s += f"(disgusted, disgust:{emotion['disgust']/100.0:.1f}), "
-		s += f"(fear, scared, terrified:{emotion['fear']/100.0:.1f}), "
-		s += f"(happy, smiling, smile:{emotion['happy']/100.0:0.1f}), "
+		s = f"(angry, furious:{emotion['angry']/100.0:.2f}), "
+		s += f"(disgusted, disgust:{emotion['disgust']/100.0:.2f}), "
+		s += f"(fear, scared, terrified:{emotion['fear']/100.0:.2f}), "
+		s += f"(happy, smiling, smile:{emotion['happy']/100.0:0.2f}), "
 		s += f"(sad:{emotion['sad']/100.0:0.1f}), "
-		s += f"(surprised, shocked:{emotion['surprise']/100.0:0.1f}), "
-		s += f"(neutral expression:{emotion['neutral']/100.0:0.1f})"
+		s += f"(surprised, shocked:{emotion['surprise']/100.0:0.2f}), "
+		s += f"(neutral expression:{emotion['neutral']/100.0:0.2f})"
 
 		print(s)
 
