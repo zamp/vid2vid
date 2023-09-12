@@ -2,6 +2,8 @@
 
 This is a python script that uses ebsynth to stabilize video made with stable diffusion (comfyui).
 
+![output](https://github.com/zamp/vid2vid/assets/1029645/da5782fc-63f3-4c45-aca8-a8002723f62b)
+
 ## Install
 
 Clone the repo somewhere and run 
@@ -65,3 +67,8 @@ Change the config.ini to point to your new workflow.
 Preview nodes mess up getting correct file for processing. Workaround: don't have preview nodes or make sure save image is last node in json. (Duplicate save node and delete previous. Hook it back in.)
 
 If you get an error about not finding scipy.libs when running emotion detection create an empty file (called scipy.libs) where it's looking for it.
+
+## TODO
+
+- [ ] Support A1111
+- [ ] Automatic keyframe detection
