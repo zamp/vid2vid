@@ -3,4 +3,4 @@ scipy
 websocket-client
 pynput
 wmi
-py-feat
+deepface

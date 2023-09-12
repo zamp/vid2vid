@@ -22,6 +22,9 @@ def fix_config(config):
 				arr.append(0)
 			arr[2] = f"{uuid.uuid4()}"
 			lines[index] = f"[{'.'.join(arr)}]\r\n"
+		if line.startswith("[ExtraPrompt"):
+			line = line[1:-2]
+			lines[index] = f"[{line}.{uuid.uuid4()}]\r\n"
 
 	file.close()
 	return "".join(lines)
@@ -70,7 +73,7 @@ def main():
 			util.copy_files_from_to(fromdir, todir, ".png")
 
 		if type == "comfyui":
-			processors.process_comfyui(rp_config)
+			processors.process_comfyui(rp_config, config)
 
 		elif type == "ebsynth_blend":
 			processors.process_ebsynth(rp_config)

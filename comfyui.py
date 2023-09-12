@@ -8,7 +8,6 @@ import io
 import random
 import requests
 from configparser import SectionProxy
-from feat import Detector
 
 client_id = str(uuid.uuid4())
 ws = websocket.WebSocket()
@@ -86,18 +85,14 @@ def get_api_id(json, title):
 			return key
 	return -1
 
-def process_image(image_path:str, video_path:str, config:SectionProxy):
+def process_image(image_path:str, video_path:str, config:SectionProxy, extra:SectionProxy):
 	# get config values	
 	workflow = config.get("Workflow")
 
 	#print(image_path, video_path)
 	if config.getboolean("DetectEmotions", fallback=False):
-		detector = Detector(
-			emotion_model="resmasknet",
-		)
-		e = detector.detect_emotions(video_path)
-		#anger 	disgust 	fear 	happiness 	sadness 	surprise 	neutral
-		emotions = f"(angry, furious:{e.anger:.1f}), (disgusted, disgust:{e.disgust:.1f}), (fear, scared, terrified:{e.fear:.1f}), (happy, smiling, smile:{e.happiness:0.1f}), (sad:{e.sadness:0.1f}), (surprised, shocked:{e.surprise:0.1f})"
+		import analyze_face
+		emotions = analyze_face.analyze_face_tokens(video_path)
 
 	workflow_json = json.load(open(workflow))
 
@@ -127,6 +122,29 @@ def process_image(image_path:str, video_path:str, config:SectionProxy):
 				workflow_json[api_id]["inputs"][input] = float(value)
 			else:
 				workflow_json[api_id]["inputs"][input] = value
+
+	# parse extra comfyui parameters
+	if extra != None:
+		for key in extra.keys():
+			if key.startswith("extra_comfyuiparam."):
+				(title, input) = parse_key(workflow_json, key)
+				if title == None or input == None:
+					continue
+
+				api_id = get_api_id(workflow_json, title)
+				if api_id == -1:
+					continue
+				value = config.get(key, raw=True)
+				if value == None:
+					continue
+
+				# additively parse correct type into json
+				if value.lstrip("-").isdigit():
+					workflow_json[api_id]["inputs"][input] += int(value)
+				elif value.replace('.','',1).isdigit() and value.count('.') < 2:
+					workflow_json[api_id]["inputs"][input] += float(value)
+				else:
+					workflow_json[api_id]["inputs"][input] += value
 
 	server_addr = config.get("ComfyUI_ServerAddress")
 	upload_image(server_addr, image_path, "input.png")
