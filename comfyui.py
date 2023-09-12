@@ -66,7 +66,8 @@ def connect(server_addr):
 	ws.connect(f"ws://{server_addr}/ws?clientId={client_id}")
 
 def close():
-	ws.close()
+	if ws.connected:
+		ws.close()
 
 def parse_key(json, key):
 	arr = key.split(".")

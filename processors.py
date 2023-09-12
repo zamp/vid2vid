@@ -11,7 +11,9 @@ from configparser import SectionProxy
 from glob import glob
 
 def run_stable_diffusion(input_file_path:str, src_file_path:str, output_file_path:str, config:SectionProxy):
+	comfyui.connect(config.get("ComfyUI_ServerAddress"))
 	image = comfyui.process_image(input_file_path, src_file_path, config)
+	comfyui.close()
 
 	# for some reason the images come out different size than put in?
 	img = Image.open(input_file_path)
