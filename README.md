@@ -1,6 +1,6 @@
-# comfy-temporal-stability
+# vid2vid
 
-This is a python script that uses ebsynth to stabilize video made with stable diffusion.
+This is a python script that uses ebsynth to stabilize video made with stable diffusion (comfyui).
 
 ## Install
 
