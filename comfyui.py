@@ -8,6 +8,7 @@ import io
 import random
 import requests
 from configparser import SectionProxy
+from feat import Detector
 
 client_id = str(uuid.uuid4())
 ws = websocket.WebSocket()
@@ -89,6 +90,13 @@ def process_image(image_path:str, video_path:str, config:SectionProxy):
 	workflow = config.get("Workflow")
 
 	#print(image_path, video_path)
+	if config.getboolean("DetectEmotions", fallback=False):
+		detector = Detector(
+			emotion_model="resmasknet",
+		)
+		e = detector.detect_emotions(video_path)
+		#anger 	disgust 	fear 	happiness 	sadness 	surprise 	neutral
+		emotions = f"(angry, furious:{e.anger:.1f}), (disgusted, disgust:{e.disgust:.1f}), (fear, scared, terrified:{e.fear:.1f}), (happy, smiling, smile:{e.happiness:0.1f}), (sad:{e.sadness:0.1f}), (surprised, shocked:{e.surprise:0.1f})"
 
 	workflow_json = json.load(open(workflow))
 
@@ -103,6 +111,10 @@ def process_image(image_path:str, video_path:str, config:SectionProxy):
 			if api_id == -1:
 				continue
 			value = config.get(key)
+
+			# add emotions to prompt
+			if key == config.get("EmotionParam"):
+				value = f"{value}, {emotions}"
 
 			# parse correct type into json
 			if value.lstrip("-").isdigit():
