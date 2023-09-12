@@ -134,7 +134,7 @@ def process_image(image_path:str, video_path:str, config:SectionProxy, extra:Sec
 				api_id = get_api_id(workflow_json, title)
 				if api_id == -1:
 					continue
-				value = config.get(key, raw=True)
+				value = extra.get(key)
 				if value == None:
 					continue
 
