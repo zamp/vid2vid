@@ -5,7 +5,7 @@ import numpy as np
 
 def analyze_face_tokens(image):
 	img = Image.open(image)
-	face_analysis = DeepFace.analyze(np.asarray(img), actions=("emotion"))
+	face_analysis = DeepFace.analyze(np.asarray(img), actions=("emotion"), enforce_detection=False)
 	img.close()
 
 	if len(face_analysis) > 0:

@@ -46,6 +46,7 @@ def main():
 
 	copy_temp = defaults.getboolean("CopyOutputToTempBetweenPasses")
 
+	emotion_tokens = None
 	if defaults.getboolean("DetectEmotions", fallback=False):
 		print("Processing emotions...")
 		import analyze_face
