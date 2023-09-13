@@ -41,6 +41,8 @@ def get_extra_config(frame:int, config:ConfigParser):
 	return None
 
 def get_tokens_for_frame(frame:int, emotion_tokens:dict):
+	if emotion_tokens == None:
+		return ""
 	if frame in emotion_tokens:
 		return emotion_tokens[frame]
 	return None
