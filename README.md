@@ -68,6 +68,18 @@ Preview nodes mess up getting correct file for processing. Workaround: don't hav
 
 If you get an error about not finding scipy.libs when running emotion detection create an empty file (called scipy.libs) where it's looking for it.
 
+## Gallery
+
+You can find these videos and config for them under /examples/
+
+https://github.com/zamp/vid2vid/assets/1029645/f9d561c7-0be2-4cd4-9654-71b627cc1949
+
+Here's an easy scene to stylize. Not a lot of movement and has character in focus. Still, too high prompting for bearded man caused artefacts in reflections. Minor flickering in background.
+
+https://github.com/zamp/vid2vid/assets/1029645/e9a06358-a8e5-4853-8945-f27915ebffef
+
+Here's a hard scene to stylize. Loads of movement. Characters are not in focus and has multiple characters. Lots of flickering in background.
+
 ## TODO
 
 - [ ] Support A1111
