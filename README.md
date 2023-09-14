@@ -80,7 +80,7 @@ Here's an easy scene to stylize. Not a lot of movement and has character in focu
 
 [police.webm](https://github.com/zamp/vid2vid/assets/1029645/ebdc5afe-324a-4e35-bffb-2fef8f536c9b)
 
-Here's a hard scene to stylize. Loads of movement. Characters are not in focus and has multiple characters. Lots of flickering in background. Flashing lights disappeared completely except on roof of car.
+Here's a hard scene to stylize. Loads of movement. Characters are not in focus (I don't mean blurry out of focus, I mean not focused as in character steps out of frame, walks in front of another character) and has multiple characters. Lots of flickering in background. Flashing lights disappeared completely except on roof of car.
 
 ## Known issues
 
