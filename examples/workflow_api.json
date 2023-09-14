@@ -1,0 +1,302 @@
+{
+  "4": {
+    "title": "loader",
+    "inputs": {
+      "ckpt_name": "hassakuHentaiModel_v12.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple"
+  },
+  "8": {
+    "title": "VAE Decode",
+    "inputs": {
+      "samples": [
+        "107",
+        0
+      ],
+      "vae": [
+        "123",
+        0
+      ]
+    },
+    "class_type": "VAEDecode"
+  },
+  "10": {
+    "title": "input",
+    "inputs": {
+      "image": "input.png",
+      "choose file to upload": "image"
+    },
+    "class_type": "LoadImage"
+  },
+  "12": {
+    "title": "VAE Encode",
+    "inputs": {
+      "pixels": [
+        "118",
+        0
+      ],
+      "vae": [
+        "123",
+        0
+      ]
+    },
+    "class_type": "VAEEncode"
+  },
+  "35": {
+    "title": "CLIP Set Last Layer",
+    "inputs": {
+      "stop_at_clip_layer": -1,
+      "clip": [
+        "4",
+        1
+      ]
+    },
+    "class_type": "CLIPSetLastLayer"
+  },
+  "42": {
+    "title": "output",
+    "inputs": {
+      "output_path": "",
+      "filename_prefix": "output",
+      "filename_delimiter": "_",
+      "filename_number_padding": 4,
+      "filename_number_start": "false",
+      "extension": "png",
+      "quality": 100,
+      "lossless_webp": "false",
+      "overwrite_mode": "prefix_as_filename",
+      "show_history": "false",
+      "show_history_by_prefix": "true",
+      "embed_workflow": "true",
+      "show_previews": "true",
+      "images": [
+        "81",
+        0
+      ]
+    },
+    "class_type": "Image Save"
+  },
+  "52": {
+    "title": "CLIP Text Encode (Advanced)",
+    "inputs": {
+      "text": [
+        "62",
+        0
+      ],
+      "token_normalization": "none",
+      "weight_interpretation": "A1111",
+      "clip": [
+        "35",
+        0
+      ]
+    },
+    "class_type": "BNK_CLIPTextEncodeAdvanced"
+  },
+  "53": {
+    "title": "CLIP Text Encode (Advanced)",
+    "inputs": {
+      "text": [
+        "61",
+        0
+      ],
+      "token_normalization": "none",
+      "weight_interpretation": "A1111",
+      "clip": [
+        "35",
+        0
+      ]
+    },
+    "class_type": "BNK_CLIPTextEncodeAdvanced"
+  },
+  "61": {
+    "title": "negative_prompt",
+    "inputs": {
+      "text": "(embedding:easynegative:1.1), blurry, motion blur, bloom, glow, worst quality, bad quality, mutated, malformed, ugly"
+    },
+    "class_type": "Text Multiline"
+  },
+  "62": {
+    "title": "positive_prompt",
+    "inputs": {
+      "text": "masterpiece, high quality, perfect anime illustration, high detail, 8k, highres, artstation, (1boy, man, baseball cap:1.2), (trees, conifer:0.8), (scared, terrified, shocked:1.4), stubble, (sunglasses:0.7)"
+    },
+    "class_type": "Text Multiline"
+  },
+  "81": {
+    "title": "ImageTransformResizeAbsolute",
+    "inputs": {
+      "width": [
+        "82",
+        0
+      ],
+      "height": [
+        "82",
+        1
+      ],
+      "method": "bilinear",
+      "images": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "ImageTransformResizeAbsolute"
+  },
+  "82": {
+    "title": "Get image size",
+    "inputs": {
+      "image": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "Get image size"
+  },
+  "83": {
+    "title": "scale",
+    "inputs": {
+      "Value": 1
+    },
+    "class_type": "Float"
+  },
+  "107": {
+    "title": "sampler",
+    "inputs": {
+      "seed": 3268,
+      "steps": 10,
+      "cfg": 8,
+      "sampler_name": "dpmpp_2m",
+      "scheduler": "karras",
+      "denoise": 0.5,
+      "model": [
+        "4",
+        0
+      ],
+      "positive": [
+        "115",
+        0
+      ],
+      "negative": [
+        "115",
+        1
+      ],
+      "latent_image": [
+        "12",
+        0
+      ]
+    },
+    "class_type": "KSampler"
+  },
+  "108": {
+    "title": "DWPreprocessor",
+    "inputs": {
+      "detect_hand": "enable",
+      "detect_body": "enable",
+      "detect_face": "enable",
+      "image": [
+        "118",
+        0
+      ]
+    },
+    "class_type": "DWPreprocessor"
+  },
+  "111": {
+    "title": "Apply ControlNet (Advanced)",
+    "inputs": {
+      "strength": 0.7499999999999998,
+      "start_percent": 0,
+      "end_percent": 1,
+      "positive": [
+        "52",
+        0
+      ],
+      "negative": [
+        "53",
+        0
+      ],
+      "control_net": [
+        "112",
+        0
+      ],
+      "image": [
+        "108",
+        0
+      ]
+    },
+    "class_type": "ControlNetApplyAdvanced"
+  },
+  "112": {
+    "title": "Load ControlNet Model",
+    "inputs": {
+      "control_net_name": "control_v11p_sd15_openpose.pth"
+    },
+    "class_type": "ControlNetLoader"
+  },
+  "113": {
+    "title": "SAM Segmentor",
+    "inputs": {
+      "image": [
+        "118",
+        0
+      ]
+    },
+    "class_type": "SAMPreprocessor"
+  },
+  "115": {
+    "title": "Apply ControlNet (Advanced)",
+    "inputs": {
+      "strength": 0.49999999999999956,
+      "start_percent": 0,
+      "end_percent": 1,
+      "positive": [
+        "111",
+        0
+      ],
+      "negative": [
+        "111",
+        1
+      ],
+      "control_net": [
+        "116",
+        0
+      ],
+      "image": [
+        "113",
+        0
+      ]
+    },
+    "class_type": "ControlNetApplyAdvanced"
+  },
+  "116": {
+    "title": "Load ControlNet Model",
+    "inputs": {
+      "control_net_name": "control_v11p_sd15_seg.pth"
+    },
+    "class_type": "ControlNetLoader"
+  },
+  "118": {
+    "title": "ImageTransformResizeRelative",
+    "inputs": {
+      "scale_width": [
+        "83",
+        0
+      ],
+      "scale_height": [
+        "83",
+        0
+      ],
+      "method": "bilinear",
+      "images": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "ImageTransformResizeRelative"
+  },
+  "123": {
+    "title": "Load VAE",
+    "inputs": {
+      "vae_name": "diffusion_pytorch_model.safetensors"
+    },
+    "class_type": "VAELoader"
+  }
+}

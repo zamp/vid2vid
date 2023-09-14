@@ -2,7 +2,7 @@
 
 This is a python script that uses ebsynth to stabilize video made with stable diffusion (comfyui).
 
-![output](https://github.com/zamp/vid2vid/assets/1029645/b52f2eef-805d-41bc-b3af-3b96d8ec08f2)
+You can find examples in the [gallery](#gallery).
 
 ## Install
 
@@ -61,6 +61,26 @@ Install WAS node suite (https://github.com/WASasquatch/was-node-suite-comfyui) a
 Save it to the workflows directory.
 
 Change the config.ini to point to your new workflow.
+
+## Gallery
+
+### Emotion detection using deepface
+
+![output](https://github.com/zamp/vid2vid/assets/1029645/b52f2eef-805d-41bc-b3af-3b96d8ec08f2)
+
+Extra frame prompts were added in config for frames with closed eyes.
+
+### Side by side examples
+
+You can find these videos and config for them under /examples/
+
+[man_sitting_bus_stop.webm](https://github.com/zamp/vid2vid/assets/1029645/e1b9309a-fe47-451b-8734-376f4d133548)
+
+Here's an easy scene to stylize. Not a lot of movement and has character in focus. Still, too high prompting for bearded man caused artefacts in reflections. Minor flickering in background.
+
+[police.webm](https://github.com/zamp/vid2vid/assets/1029645/ebdc5afe-324a-4e35-bffb-2fef8f536c9b)
+
+Here's a hard scene to stylize. Loads of movement. Characters are not in focus and has multiple characters. Lots of flickering in background. Flashing lights disappeared completely except on roof of car.
 
 ## Known issues
 
