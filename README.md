@@ -62,17 +62,13 @@ Save it to the workflows directory.
 
 Change the config.ini to point to your new workflow.
 
-## Known issues
-
-Preview nodes mess up getting correct file for processing. Workaround: don't have preview nodes or make sure save image is last node in json. (Duplicate save node and delete previous. Hook it back in.)
-
-If you get an error about not finding scipy.libs when running emotion detection create an empty file (called scipy.libs) where it's looking for it.
-
 ## Gallery
 
 ### Emotion detection using deepface
 
 ![output](https://github.com/zamp/vid2vid/assets/1029645/b52f2eef-805d-41bc-b3af-3b96d8ec08f2)
+
+Extra frame prompts were added in config for frames with closed eyes.
 
 ### Side by side examples
 
@@ -85,6 +81,12 @@ Here's an easy scene to stylize. Not a lot of movement and has character in focu
 [police.webm](https://github.com/zamp/vid2vid/assets/1029645/ebdc5afe-324a-4e35-bffb-2fef8f536c9b)
 
 Here's a hard scene to stylize. Loads of movement. Characters are not in focus and has multiple characters. Lots of flickering in background. Flashing lights disappeared completely except on roof of car.
+
+## Known issues
+
+Preview nodes mess up getting correct file for processing. Workaround: don't have preview nodes or make sure save image is last node in json. (Duplicate save node and delete previous. Hook it back in.)
+
+If you get an error about not finding scipy.libs when running emotion detection create an empty file (called scipy.libs) where it's looking for it.
 
 ## TODO
 
