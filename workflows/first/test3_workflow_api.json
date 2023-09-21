@@ -1,0 +1,127 @@
+{
+  "1": {
+    "title": "Load Checkpoint",
+    "inputs": {
+      "ckpt_name": "flat2DAnimerge_v30.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple"
+  },
+  "2": {
+    "title": "sampler",
+    "inputs": {
+      "seed": 0,
+      "steps": 20,
+      "cfg": 8,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "denoise": 1,
+      "model": [
+        "1",
+        0
+      ],
+      "positive": [
+        "5",
+        0
+      ],
+      "negative": [
+        "6",
+        0
+      ],
+      "latent_image": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "KSampler"
+  },
+  "3": {
+    "title": "Image Load",
+    "inputs": {
+      "image_path": "G:\\AI Art\\Zamp vid2vid\\vid2vid\\temp\\video\\001.png",
+      "RGBA": "false",
+      "filename_text_extension": "true"
+    },
+    "class_type": "Image Load"
+  },
+  "4": {
+    "title": "Image Save",
+    "inputs": {
+      "output_path": "",
+      "filename_prefix": "output",
+      "filename_delimiter": "",
+      "filename_number_padding": 3,
+      "filename_number_start": "false",
+      "extension": "png",
+      "quality": 100,
+      "lossless_webp": "false",
+      "overwrite_mode": "prefix_as_filename",
+      "show_history": "false",
+      "show_history_by_prefix": "true",
+      "embed_workflow": "true",
+      "show_previews": "true",
+      "images": [
+        "7",
+        0
+      ]
+    },
+    "class_type": "Image Save"
+  },
+  "5": {
+    "title": "positive_prompt",
+    "inputs": {
+      "text": "",
+      "clip": [
+        "1",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode"
+  },
+  "6": {
+    "title": "negative_prompt",
+    "inputs": {
+      "text": "",
+      "clip": [
+        "1",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode"
+  },
+  "7": {
+    "title": "VAE Decode",
+    "inputs": {
+      "samples": [
+        "2",
+        0
+      ],
+      "vae": [
+        "1",
+        2
+      ]
+    },
+    "class_type": "VAEDecode"
+  },
+  "8": {
+    "title": "VAE Encode",
+    "inputs": {
+      "pixels": [
+        "9",
+        0
+      ],
+      "vae": [
+        "1",
+        2
+      ]
+    },
+    "class_type": "VAEEncode"
+  },
+  "9": {
+    "title": "Load Image",
+    "inputs": {
+      "image": "input.png",
+      "choose file to upload": "image"
+    },
+    "class_type": "LoadImage"
+  }
+}

@@ -1,2 +1,2 @@
-python main.py
+.\python_embeded\python.exe main.py
 pause

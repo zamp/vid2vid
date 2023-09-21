@@ -30,8 +30,8 @@ def fix_config(config):
 	return "".join(lines)
 
 def main():
-	# Start a timer.	
-	start_time = time.time()
+	# Start overall timer.	
+	start_timer = time.time()
 
 	config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
 
@@ -68,6 +68,7 @@ def main():
 		type = arr[1]
 
 		print(f"Executing pass: {name} ({type})")
+		start_pass_timer = time.time()
 
 		rp_config = config[config_name]
 
@@ -96,11 +97,15 @@ def main():
 
 		if rp_config.getboolean("WaitForUserInput", fallback=False):
 			input("Press enter to continue...")
-	
+		
+		
+		pass_timer_obj = datetime.utcfromtimestamp(time.time() - start_pass_timer)
+		print("Pass time:", pass_timer_obj.strftime("%H:%M:%S"))
+
 	print("DONE!")
 	# End timer and display in hours, minutes and seconds.
-	time_obj = datetime.utcfromtimestamp(time.time() - start_time)
-	print("Time elapsed:", time_obj.strftime("%H:%M:%S"))
+	time_obj = datetime.utcfromtimestamp(time.time() - start_timer)
+	print("Total time:", time_obj.strftime("%H:%M:%S"))
 	return
 
 main()

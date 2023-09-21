@@ -5,3 +5,6 @@
 /config.py
 /config.ini
 /config/config.ini
+*.png
+/sequences
+/python_embeded
