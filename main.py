@@ -4,6 +4,8 @@ import processors
 import util
 import configparser
 import uuid
+import time
+from datetime import datetime
 
 def fix_config(config):
 	if not os.path.exists(config):	
@@ -28,6 +30,9 @@ def fix_config(config):
 	return "".join(lines)
 
 def main():
+	# Start overall timer.	
+	start_timer = time.time()
+
 	config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
 
 	config.read_string(fix_config("config/example.config.ini"))
@@ -63,6 +68,7 @@ def main():
 		type = arr[1]
 
 		print(f"Executing pass: {name} ({type})")
+		start_pass_timer = time.time()
 
 		rp_config = config[config_name]
 
@@ -92,7 +98,13 @@ def main():
 		if rp_config.getboolean("WaitForUserInput", fallback=False):
 			input("Press enter to continue...")
 
+		pass_timer_obj = datetime.utcfromtimestamp(time.time() - start_pass_timer)
+		print("Pass time:", pass_timer_obj.strftime("%H:%M:%S"))
+
 	print("DONE!")
+	# End timer and display in hours, minutes and seconds.
+	time_obj = datetime.utcfromtimestamp(time.time() - start_timer)
+	print("Time elapsed:", time_obj.strftime("%H:%M:%S"))
 	return
 
 main()
