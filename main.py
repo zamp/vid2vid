@@ -42,6 +42,12 @@ def main():
 
 	if defaults.getboolean("UseExampleRenderPasses"):
 		config.read_string(fix_config("config/example.renderpasses.ini"))
+	elif defaults.get("RenderPassFile"):		
+		if os.path.isfile(defaults.get("RenderPassFile")):
+			config.read_string(fix_config(defaults.get("RenderPassFile")))
+		else:
+			print(f"Could not find RenderPassFile: {defaults.get('RenderPassFile')}")
+			return
 
 	if not "VideoDir" in defaults:
 		print(f"Error: Could not find VideoDir in config.")
