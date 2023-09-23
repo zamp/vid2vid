@@ -47,7 +47,7 @@ def main():
 		if os.path.isfile(render_pass_file):
 			config.read_string(fix_config(render_pass_file))
 		else:
-			print(f"Could not find RenderPassFile: {defaults.get('RenderPassFile')}")
+			print(f"Could not find RenderPassFile: {render_pass_file}")
 			return
 
 	if not "VideoDir" in defaults:
