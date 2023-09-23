@@ -39,12 +39,13 @@ def main():
 	config.read_string(fix_config("config/config.ini"))
 
 	defaults = config["DEFAULT"]
-
+	render_pass_file = defaults.get("RenderPassFile")
+								 
 	if defaults.getboolean("UseExampleRenderPasses"):
 		config.read_string(fix_config("config/example.renderpasses.ini"))
-	elif defaults.get("RenderPassFile"):		
-		if os.path.isfile(defaults.get("RenderPassFile")):
-			config.read_string(fix_config(defaults.get("RenderPassFile")))
+	elif render_pass_file:
+		if os.path.isfile(render_pass_file):
+			config.read_string(fix_config(render_pass_file))
 		else:
 			print(f"Could not find RenderPassFile: {defaults.get('RenderPassFile')}")
 			return
