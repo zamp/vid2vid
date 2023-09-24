@@ -60,11 +60,12 @@ def process_comfyui(config:SectionProxy, full_config:ConfigParser, emotion_token
 
 		first = files[0]
 		extra_config = get_extra_config(util.get_frame_int(first), full_config)
-		
+		print("Generating frame:", util.get_frame_int(first))
 		run_stable_diffusion(input_dir+first, video_dir+first, output_dir+first, config, extra_config, get_tokens_for_frame(util.get_frame_int(first), emotion_tokens))
 
 		last = files[len(files)-1]
 		extra_config = get_extra_config(util.get_frame_int(last), full_config)
+		print("Generating frame:", util.get_frame_int(last))
 		run_stable_diffusion(input_dir+last, video_dir+last, output_dir+last, config, extra_config, get_tokens_for_frame(util.get_frame_int(last), emotion_tokens))
 	else:
 		limit_frames = config.getint("SkipFrames", fallback=0) + 1
@@ -78,6 +79,7 @@ def process_comfyui(config:SectionProxy, full_config:ConfigParser, emotion_token
 				continue
 
 			extra_config = get_extra_config(frame, full_config)
+			print("Generating frame:", frame)
 			run_stable_diffusion(input_dir+file, video_dir+file, output_dir+file, config, extra_config, get_tokens_for_frame(frame, emotion_tokens))
 
 def clamp(num, min_value, max_value):
