@@ -31,12 +31,33 @@ def get_extra_prompts(frame:int, extra_prompts:dict):
 		return (ep.positive, ep.negative)
 	return (None, None)
 
+def is_in_extra_frames(frame:int, frames:str):
+	if frame == None:
+		return False
+	if frames == None:
+		return False
+	frame_ranges = str.split(frames, ",")
+	for cur_range in frame_ranges:
+		if str.find(cur_range, "-") == -1: # not a range
+			if int(cur_range) == frame:
+				return True
+		else:
+			cur_range_split = str.split(cur_range, "-")
+			start = int(cur_range_split[0])
+			end = int(cur_range_split[1])
+			if frame >= start and frame <= end:
+				return True			
+			
+	return False
+
 def get_extra_config(frame:int, config:ConfigParser):
 	for config_name in config:
 		if not config_name.startswith("ExtraPrompt"):
 			continue
 		ep_config = config[config_name]
 		if ep_config.getint("Frame") == frame:
+			return ep_config
+		if is_in_extra_frames(frame, ep_config.get("Frames")):
 			return ep_config
 	return None
 
