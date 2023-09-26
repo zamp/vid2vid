@@ -1,6 +1,11 @@
 import processors
 
 # test is in extra frames
+assert processors.is_in_extra_frames(None, None) == False, "None should not be found."
+assert processors.is_in_extra_frames(None, "1,2,3") == False, "None should not be found."
+assert processors.is_in_extra_frames(None, "1-5") == False, "None should not be found."
+assert processors.is_in_extra_frames(1, None) == False, "None should not be found."
+
 test = ""
 for i in range(1,999):
     test += f"{i},"
