@@ -39,9 +39,20 @@ def main():
 	config.read_string(fix_config("config/config.ini"))
 
 	defaults = config["DEFAULT"]
-
+	render_pass_file = defaults.get("RenderPassFile")
+								 
 	if defaults.getboolean("UseExampleRenderPasses"):
 		config.read_string(fix_config("config/example.renderpasses.ini"))
+	elif render_pass_file:
+		if os.path.isfile(render_pass_file):
+			config.read_string(fix_config(render_pass_file))
+		else:
+			print(f"Could not find RenderPassFile: {render_pass_file}")
+			return
+	
+	if not any([c.startswith("RenderPass") for c in config]):
+		print('No renderpasses found in configuration files.')
+		return
 
 	if not "VideoDir" in defaults:
 		print(f"Error: Could not find VideoDir in config.")
