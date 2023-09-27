@@ -70,6 +70,13 @@ def main():
 
 	print("Processing files from frame: " + str(frame_min).zfill(3) + " to: " + str(frame_max).zfill(3))
 
+	# Print the keyframes to be generated. Allows the user to stop execution early if there are errors.
+	if defaults.getboolean("PingPong", fallback=False):
+		print(f"PingPong enabled. Keyframes: [{frame_min:03}, {frame_max:03}]")
+	else:
+		keyframe_list = list(range(frame_min, frame_max + 1, defaults.getint("SkipFrames", fallback=0) + 1))
+		print(f"Keyframes: {keyframe_list}")
+
 	for config_name in config:
 		if not config_name.startswith("RenderPass"):
 			continue
