@@ -49,6 +49,10 @@ def main():
 		else:
 			print(f"Could not find RenderPassFile: {render_pass_file}")
 			return
+	
+	if not any([c.startswith("RenderPass") for c in config]):
+		print('No renderpasses found in configuration files.')
+		return
 
 	if not "VideoDir" in defaults:
 		print(f"Error: Could not find VideoDir in config.")
@@ -113,7 +117,7 @@ def main():
 			input("Press enter to continue...")
 
 		pass_timer_obj = datetime.utcfromtimestamp(time.time() - start_pass_timer)
-		print("Pass time:", pass_timer_obj.strftime("%H:%M:%S"))
+		print("Pass finished in:", pass_timer_obj.strftime("%H:%M:%S"))
 
 	print("DONE!")
 	# End timer and display in hours, minutes and seconds.
